@@ -1,0 +1,13 @@
+Implement sensitivity, slider or a HIGH/low
+	maybe - draw the bucket below as a demo so they can see?
+	
+Implement falling background
+	looping images, that rotate before and after draw to keep up with screen orientation
+
+Global highscores
+	Find this permissions file that I need
+	Get it working
+	Get it integrated with facebook
+	
+Refactoring
+	ditch shape back to sides, so I can change stuff dynamically. If each sode draws itself, i can do things to the square like move sides.

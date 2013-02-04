@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CatchMe</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="textOpeningTitle">Catch Me</string>
+    <string name="textStartGame">Start Game</string>
+    <string name="textMainGameTitle">GameScreen</string>
+    <string name="textTwo">Two Colours</string>
+    <string name="textFour">Four Colours</string>
+    <string name="welcomeMessage">Select Game Mode:</string>
+    <string name="labelHowToPlay">How to Play</string>
+    <string name="textgMode">Mode:</string>
+    <string name="texthowToPlay"><b>Objective:</b>
+\nThe point is to collect the falling objects with the side of your bucket that corresponds to the colour of the falling object.
+\n\n<b>Game Modes:</b>
+\n<b>Two Colours:</b>
+\nThe balls are either Red or Blue
+\n<b>Four Colours:</b>
+\nGreen and Yellow balls are added.
+\n<b>Pink Balls</b>
+\nIf you see a pink ball you must use <i>\'White Mode\'</i> to catch it scoring you 5 points.
+\nFail to do this and you will lose points.
+\n\n<b>White Mode:</b>
+\nTouch the screen to enable <i>\'White Mode\'</i>, this enables you to catch any ball with any side of the circle. N.B. This does not last forever!</string>
+	<string name="the_splash_screen">The Splash Screen</string>
+	<string name="stringScore">Score: </string>
+	<string name="stringHighScore">High Score: </string>
+	<string name="textGameOver">Game Over</string>
+	<string name="textaNewHighScore">a new High Score!</string>
+	<string name="textMusic">Music</string>
+	<string name="textTiltSensitivity">Tilt Sensitivity</string>
+	<string name="textSoundEffects">Sound Effects</string>
+	<string name="textBack">Back</string>
+	<string name="textVibrate">Vibrate</string>
+	<string name="textInvertTilt">Invert Tilt</string>
+	<string name="textHighScores">High Scores</string>
+	<string name="textYourScore">Your Score</string>
+</resources>

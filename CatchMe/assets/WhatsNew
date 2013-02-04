@@ -1,0 +1,17 @@
+V 1.1.0
+NOW NEEDS API-5 Eclair
+Menu screen added, allows:
+	Mute music,
+	Mute the sound FX,
+	and more.
+
+Works with older devices.
+
+Top 5 high scores
+
+Bug fixes.
+
+V 1.0.1
+Back button exits the welcome screen, rather than going back to the game.
+
+Circles explode on contact with the square.
