@@ -104,8 +104,10 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int textBack=0x7f060014;
         public static final int textFour=0x7f060007;
         public static final int textGameOver=0x7f06000f;
+        public static final int textHigh=0x7f060019;
         public static final int textHighScores=0x7f060017;
         public static final int textInvertTilt=0x7f060016;
+        public static final int textLow=0x7f06001a;
         public static final int textMainGameTitle=0x7f060005;
         public static final int textMusic=0x7f060011;
         public static final int textOpeningTitle=0x7f060003;

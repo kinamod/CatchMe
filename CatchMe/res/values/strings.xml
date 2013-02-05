@@ -30,11 +30,13 @@
 	<string name="textGameOver">Game Over</string>
 	<string name="textaNewHighScore">a new High Score!</string>
 	<string name="textMusic">Music</string>
-	<string name="textTiltSensitivity">Tilt Sensitivity</string>
+	<string name="textTiltSensitivity">High Tilt Sensitivity</string>
 	<string name="textSoundEffects">Sound Effects</string>
 	<string name="textBack">Back</string>
 	<string name="textVibrate">Vibrate</string>
 	<string name="textInvertTilt">Invert Tilt</string>
 	<string name="textHighScores">High Scores</string>
 	<string name="textYourScore">Your Score</string>
+	<string name="textHigh">High</string>
+	<string name="textLow">Low</string>
 </resources>

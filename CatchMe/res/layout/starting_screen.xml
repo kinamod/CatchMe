@@ -160,7 +160,10 @@
                                 android:id="@+id/toggleSensitivity"
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
-                                android:text="@string/textTiltSensitivity" />
+                                android:text="@string/textTiltSensitivity"
+                                android:textOff="@string/textLow"
+                                android:textOn="@string/textHigh" />
+
                         </LinearLayout>
                     </LinearLayout>
 

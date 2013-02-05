@@ -45,8 +45,8 @@ public class HomeScreenActivity extends Activity {
 
 	public void flipToHome(View view) {
 		menuShowing = false;
-		pushMusicandVibratetoPrefs();
 		pushPreferencestoGameState();
+		pushMusicandVibratetoPrefs();
 		vs.setAnimation(AnimationUtils.makeInAnimation(getApplicationContext(),
 				true));
 		vs.showPrevious();
@@ -59,7 +59,7 @@ public class HomeScreenActivity extends Activity {
 		vs.showNext();
 	}
 
-	private void getHighScoreTable() {
+	private void loadHighScoesFromPrefs() {
 		@SuppressWarnings("unused")
 		final String TAG = "PrefStores";
 		// getting preferences
@@ -101,13 +101,13 @@ public class HomeScreenActivity extends Activity {
 		// getting preferences
 		prefs = this.getSharedPreferences(CatchMe.PREF_FILE_NAME,
 				Context.MODE_PRIVATE);
-		catchMe.setMusicON(prefs.getBoolean("Music", true));
+		catchMe.setMusicON(prefs.getBoolean("Music", true), player);
 		catchMe.setVibrate(prefs.getBoolean("Vibrate", true));
 		catchMe.setInvertTilt(prefs.getBoolean("Invert", false));
 		catchMe.setHighSensitivity(prefs.getBoolean("Sensitivity", true));
 		updateToggleButtons();
 		pushPreferencestoGameState();
-		getHighScoreTable();
+		loadHighScoesFromPrefs();
 	}
 
 	private void makeHighScoreDialog(String inString, boolean gameOvr) {
@@ -214,7 +214,7 @@ public class HomeScreenActivity extends Activity {
 
 		// Add the adView to it
 		adlayout.addView(adView);
-		setupToggleListeners();
+		initToggleButtons();
 		loadInPrefsAndHighScore();
 	}
 
@@ -298,9 +298,9 @@ public class HomeScreenActivity extends Activity {
 	// = = = = =
 
 	private void pushPreferencestoGameState() {
-		catchMe.setMusicON(buttMusic.getText().equals("ON"));
+		catchMe.setMusicON(buttMusic.getText().equals("ON"), player);
 		catchMe.setSoundFX(buttFX.getText().equals("ON"));
-		catchMe.setHighSensitivity(buttSensitivity.getText().equals("ON"));
+		catchMe.setHighSensitivity(buttSensitivity.getText().equals("High"));
 		catchMe.setVibrate(buttVibrate.getText().equals("ON"));
 		catchMe.setInvertTilt(buttInvertTilt.getText().equals("ON"));
 
@@ -320,12 +320,13 @@ public class HomeScreenActivity extends Activity {
 
 	}
 
-	private void setupToggleListeners() {
+	private void initToggleButtons() {
 		buttSensitivity = (ToggleButton) findViewById(R.id.toggleSensitivity);
 		buttMusic = (ToggleButton) findViewById(R.id.toggleMusic);
 		buttFX = (ToggleButton) findViewById(R.id.toggleSound);
 		buttVibrate = (ToggleButton) findViewById(R.id.toggleVibrate);
 		buttInvertTilt = (ToggleButton) findViewById(R.id.buttInvertTilt);
+
 	}
 
 	private void showGameOverDialog() {
@@ -343,7 +344,9 @@ public class HomeScreenActivity extends Activity {
 			@Override
 			public void run() {
 				player.setLooping(true);
-				player.start();
+				if (catchMe.isMusicON()) {
+					player.start();
+				}
 			}
 		};
 		t.start();

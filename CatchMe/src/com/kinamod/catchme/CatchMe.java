@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import android.app.Application;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.util.DisplayMetrics;
 import android.view.Display;
 
@@ -23,10 +24,11 @@ public class CatchMe extends Application {
 	public static final String PREF_FILE_NAME = "CatchMePrefsFile";
 
 	private static CatchMe singleton;
-//HI
+
+	// HI
 	public static CatchMe getInstance() {
 		if (singleton == null) {
-			
+
 			singleton = new CatchMe();
 		}
 		return singleton;
@@ -201,8 +203,11 @@ public class CatchMe extends Application {
 		invertTilt = in;
 	}
 
-	public void setMusicON(boolean musicON) {
+	public void setMusicON(boolean musicON, MediaPlayer player) {
 		this.musicON = musicON;
+		if (!musicON) {
+			player.pause();
+		}
 	}
 
 	public void setRotateDegrees(float in) {
