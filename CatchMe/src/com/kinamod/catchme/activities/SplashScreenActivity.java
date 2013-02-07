@@ -7,7 +7,6 @@
  */
 package com.kinamod.catchme.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,13 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kinamod.catchme.R;
+import com.kinamod.catchme.util.SwarmHandler;
+import com.swarmconnect.SwarmActivity;
 
-public class SplashScreenActivity extends Activity {
+public class SplashScreenActivity extends SwarmActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.splash_screen);
+		com.swarmconnect.Swarm.preload(this, SwarmHandler.SWARM_ID, SwarmHandler.SWARM_KEY);
 
 		Handler handler = new Handler();
 
@@ -37,8 +39,7 @@ public class SplashScreenActivity extends Activity {
 				finish();
 				// start the home screen
 
-				Intent intent = new Intent(SplashScreenActivity.this,
-						HomeScreenActivity.class);
+				Intent intent = new Intent(SplashScreenActivity.this, HomeScreenActivity.class);
 				SplashScreenActivity.this.startActivity(intent);
 
 			}

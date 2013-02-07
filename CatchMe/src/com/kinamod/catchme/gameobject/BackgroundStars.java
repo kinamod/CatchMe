@@ -28,7 +28,8 @@ public class BackgroundStars {
 		if (myBitmap == null) {
 			myBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
 					mainGameActivity.getResources(),
-					R.drawable.transparentstars), bmpWidth, bmpHeight, false);
+							R.drawable.starrynightcopy),
+					bmpWidth, bmpHeight, false);
 			slavePosY = -bmpHeight;
 		}
 	}
@@ -49,7 +50,7 @@ public class BackgroundStars {
 
 	public void update(float dTime) {
 		float basePosX;
-		basePosY += dTime / 2;
+		basePosY += dTime / 3;
 		basePosX = -Math.abs((catchMe.getScreenSize().x / 1.2f)
 				* (float) Math.sin(Math.toRadians(catchMe.getRotateDegrees())));
 		slavePosY = basePosY - bmpHeight;

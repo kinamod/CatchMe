@@ -30,7 +30,7 @@
 	<string name="textGameOver">Game Over</string>
 	<string name="textaNewHighScore">a new High Score!</string>
 	<string name="textMusic">Music</string>
-	<string name="textTiltSensitivity">High Tilt Sensitivity</string>
+	<string name="textTiltSensitivity">Tilt Sensitivity</string>
 	<string name="textSoundEffects">Sound Effects</string>
 	<string name="textBack">Back</string>
 	<string name="textVibrate">Vibrate</string>
@@ -39,4 +39,18 @@
 	<string name="textYourScore">Your Score</string>
 	<string name="textHigh">High</string>
 	<string name="textLow">Low</string>
+	<string name="textLoggedInAs">Logged in as: </string>
+	<string name="textLoggedOut">Swarm Logged Out!</string>
+	<string name="textSubmitScore">Submit Score</string>
+	<string name="textGlobalLeaderboards">Global Leaderboard</string>
+	<string name="textGotAchievements">Got Achievements</string>
+	<string name="textPast10">You got past ten points!</string>
+	<string name="textPast50">You got past fifty points!</string>
+	<string name="textPast100">You got past one hundred points!</string>
+	<string name="textPast200">You got past two hundred points!</string>
+	<string name="textSwarmLogin">Login for Global Leaderboards</string>
+	<string name="textSwarmloginTitle">Login to Swarm</string>
+	<string name="textSwarmLoginRequest">Would you like to login so you can be scored Globally and earn Achievements?</string>
+	<string name="textSwarmLoginFullUser">Login as Full User</string>
+	<string name="whitebutton">WhiteButton</string>
 </resources>

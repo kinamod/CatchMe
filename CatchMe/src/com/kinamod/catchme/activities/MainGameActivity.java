@@ -12,7 +12,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,7 +25,6 @@ import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -47,10 +45,10 @@ import com.kinamod.catchme.util.CustomisedLogging;
 import com.kinamod.catchme.util.GameCanvas;
 import com.kinamod.catchme.util.MathsHelper;
 import com.kinamod.catchme.util.SoundPoolCatchMe;
+import com.swarmconnect.SwarmActivity;
 
-public class MainGameActivity extends Activity {
-	private static final CustomisedLogging logger = new CustomisedLogging(
-			false, false);
+public class MainGameActivity extends SwarmActivity {
+	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
 	private static MainGameActivity MAIN_GAME_ACTIVITY;
 	private static int noCircles = 0;
 
@@ -65,10 +63,8 @@ public class MainGameActivity extends Activity {
 	public Bucket bucket;
 	// private Thread execThread;
 	private CatchMe catchMe = CatchMe.getInstance();
-	private Thread circleThread, gameThread, explosionThread, musicThread,
-			fuelRefillThread;
-	private ScheduledExecutorService createCircle, gameExecutor, fRFill,
-			explosionKiller;// executorStatus;
+	private Thread circleThread, gameThread, explosionThread, musicThread, fuelRefillThread;
+	private ScheduledExecutorService createCircle, gameExecutor, fRFill, explosionKiller;// executorStatus;
 	private Editor editor;
 	protected ExplosionContainer explosionContainer = new ExplosionContainer();
 	protected FallingObjectContainer fOContainer;
@@ -101,8 +97,6 @@ public class MainGameActivity extends Activity {
 
 	private SoundPoolCatchMe soundPool;
 
-	private Vibrator vb;
-
 	private void checkCollisions() {
 		final String TAG = "checkCollisons";
 		PointF circle = new PointF();
@@ -114,31 +108,27 @@ public class MainGameActivity extends Activity {
 			logger.localDebugLog(1, TAG, "Check side: " + bucketSide);
 			for (int whichCircle = 0; whichCircle < fOContainer.size(); whichCircle++) {
 				logger.localDebugLog(1, TAG, "Check circle: " + whichCircle);
-				boolean shouldICheck = fOContainer.shouldICheck(whichCircle,
-						bucketHalfSize);
+				boolean shouldICheck = fOContainer.shouldICheck(whichCircle, bucketHalfSize);
 				if (!shouldICheck) {
 					logger.localDebugLog(1, TAG, "Dont check");
 					continue;
 				}
 				logger.localDebugLog(1, TAG, "Check");
-				circle = MathsHelper.subtractPointFP(
-						fOContainer.get(whichCircle).getPosition(),
+				circle = MathsHelper.subtractPointFP(fOContainer.get(whichCircle).getPosition(),
 						MathsHelper.dividePoint(catchMe.getScreenSize(), 2));
-				fromLineAye = MathsHelper.subtractPointF(circle, bucket
-						.getBucketLine(bucketSide).getAye());
+				fromLineAye = MathsHelper.subtractPointF(circle, bucket.getBucketLine(bucketSide).getAye());
 
 				if (MathsHelper.getHypF(fromLineAye) < bucketHalfSize * 2) {
 					// Possible Touch as within one side
 					logger.localDebugLog(2, TAG, "Close to Aye");
-					fromLineBee = MathsHelper.subtractPointF(circle, bucket
-							.getBucketLine(bucketSide).getBee());
+					fromLineBee = MathsHelper.subtractPointF(circle, bucket.getBucketLine(bucketSide)
+							.getBee());
 
 					if (MathsHelper.getHypF(fromLineBee) < bucketHalfSize * 2) {
 						// Within Both sides, now check for circle Radius
 						logger.localDebugLog(2, TAG, "Also close to Bee");
-						perpDistance = MathsHelper.perpDistance(bucket
-								.getBucketLine(bucketSide).getAye(), bucket
-								.getBucketLine(bucketSide).getBee(), circle);
+						perpDistance = MathsHelper.perpDistance(bucket.getBucketLine(bucketSide).getAye(),
+								bucket.getBucketLine(bucketSide).getBee(), circle);
 
 						if (perpDistance <= fOContainer.getCircleSize()) {
 							fOContainer.get(whichCircle).setDying(true);
@@ -151,31 +141,25 @@ public class MainGameActivity extends Activity {
 								} else {// incorrect pink circle
 									catchMe.decPink(5);
 									healthBar.decCount();
-									explosionContainer.addExplosion(fOContainer
-											.get(whichCircle).getBitmap(),
-											fOContainer.get(whichCircle)
-													.getPosition());
+									explosionContainer.addExplosion(fOContainer.get(whichCircle).getBitmap(),
+											fOContainer.get(whichCircle).getPosition());
 									if (catchMe.isVibrate()) {
-										vb.vibrate(200);
+										catchMe.vibrate(200);
 									}
 									playSound('g');
 								}
-							} else if (fOContainer.get(whichCircle).getColour() == bucket
-									.getBucketLine(bucketSide).getColor()
+							} else if (fOContainer.get(whichCircle).getColour() == bucket.getBucketLine(
+									bucketSide).getColor()
 									|| fuelBar.isInUse()) {
-								logger.localDebugLog(2, TAG,
-										"                    The colour line");
+								logger.localDebugLog(2, TAG, "                    The colour line");
 								catchMe.incScore();
 								playSound('l'); // correct ANY circle
 							} else {
 								playSound('s'); // incorrect ANY circle
 								catchMe.decPink(0);
 								healthBar.decCount();
-								explosionContainer.addExplosion(fOContainer
-										.get(whichCircle).getBitmap(),
-										fOContainer.get(whichCircle)
-												.getPosition());
-								checkHealth();
+								explosionContainer.addExplosion(fOContainer.get(whichCircle).getBitmap(),
+										fOContainer.get(whichCircle).getPosition());
 							}
 						}
 					}
@@ -191,8 +175,8 @@ public class MainGameActivity extends Activity {
 	}
 
 	private void endExecutors() {
-		createCircle.shutdown();
 		gameExecutor.shutdown();
+		createCircle.shutdown();
 		fRFill.shutdown();
 	}
 
@@ -210,8 +194,8 @@ public class MainGameActivity extends Activity {
 	// }
 
 	public void gameOver() {
-		Intent intent = new Intent(getApplicationContext(),
-				HomeScreenActivity.class);
+		endExecutors();
+		Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
 		upDateHighScore();
 		catchMe.setGameOver(true);
 		startActivity(intent);
@@ -222,11 +206,9 @@ public class MainGameActivity extends Activity {
 	private void generateCircle() {
 		noCircles++;
 		int clicksToCentre = 100;
-		logger.localDebugLog(2, "noCircles", "Number of circles:- "
-				+ fOContainer.size() + " of " + noCircles);
+		logger.localDebugLog(2, "noCircles", "Number of circles:- " + fOContainer.size() + " of " + noCircles);
 
-		fOContainer.makeNewFallingObject(clicksToCentre,
-				randomStartPosition(catchMe.getScreenSize()),
+		fOContainer.makeNewFallingObject(clicksToCentre, randomStartPosition(catchMe.getScreenSize()),
 				catchMe.getScreenSize());
 	}
 
@@ -287,8 +269,7 @@ public class MainGameActivity extends Activity {
 				// Check for gone circles
 				fOContainer.killDeadCircles();
 
-				logger.localDebugLog(2, "HowMany", "number of Circles"
-						+ fOContainer.size());
+				logger.localDebugLog(2, "HowMany", "number of Circles" + fOContainer.size());
 			}
 
 		};
@@ -357,8 +338,7 @@ public class MainGameActivity extends Activity {
 						ex.printStackTrace();
 					}
 				} catch (IllegalStateException ex) {
-					logger.localDebugLog(1, "MediaPlayer",
-							"IllegalStateException:\n" + ex.getCause());
+					logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + ex.getCause());
 				}
 			}
 		};
@@ -420,14 +400,14 @@ public class MainGameActivity extends Activity {
 	protected void onPause() {
 		final String TAG = "StopResume";
 		logger.localDebugLog(2, TAG, "onPause");
+		endExecutors();
 		mSensorManager.unregisterListener(gameCanvasView);
 		try {
 			if (!(player == null)) {
 				player.pause();
 			}
 		} catch (IllegalStateException e) {
-			logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n"
-					+ e.getCause());
+			logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + e.getCause());
 		}
 
 		super.onPause();
@@ -439,15 +419,13 @@ public class MainGameActivity extends Activity {
 		// final String TAG = "StopResume";
 
 		startGame();
-		vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		if (Build.VERSION.SDK_INT <= 8) {
 			mSensorManager.registerListener(gameCanvasView,
 					mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 					SensorManager.SENSOR_DELAY_GAME);
 		} else {
 			// Sensor.TYPE_GRAVITY( = 9) introduced in API 9(2.3 Gingerbread)
-			mSensorManager.registerListener(gameCanvasView,
-					mSensorManager.getDefaultSensor(0x00000009),
+			mSensorManager.registerListener(gameCanvasView, mSensorManager.getDefaultSensor(0x00000009),
 					SensorManager.SENSOR_DELAY_GAME);
 		}
 	}
@@ -461,12 +439,10 @@ public class MainGameActivity extends Activity {
 			try {
 				player.stop();
 			} catch (IllegalStateException e) {
-				logger.localDebugLog(1, "MediaPlayer",
-						"IllegalStateException:\n" + e.getCause());
+				logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + e.getCause());
 			}
 			player.release();
 		}
-		endExecutors();
 		bgStars.releaseBitmap();
 		FallingObjectContainer.releaseBitMaps();
 		super.onStop();
@@ -587,35 +563,28 @@ public class MainGameActivity extends Activity {
 		bgStars = new BackgroundStars(this);
 
 		gameCanvasView = new GameCanvas(this, this);
-
 	}
 
 	private void startGame() {
 
 		resetGame();
 		loadMusic();
-
 		makeThreads();
-
 		makeBars();
 
 		gameExecutor = new ScheduledThreadPoolExecutor(1);
-		gameExecutor.scheduleAtFixedRate(gameThread, 0, 1000 / 40,
-				TimeUnit.MILLISECONDS);
+		gameExecutor.scheduleAtFixedRate(gameThread, 0, 1000 / 30, TimeUnit.MILLISECONDS);
 
 		fRFill = new ScheduledThreadPoolExecutor(1);
-		fRFill.scheduleAtFixedRate(fuelRefillThread, 0, 500,
-				TimeUnit.MILLISECONDS);
+		fRFill.scheduleAtFixedRate(fuelRefillThread, 0, 500, TimeUnit.MILLISECONDS);
 
 		explosionKiller = new ScheduledThreadPoolExecutor(1);
-		explosionKiller.scheduleAtFixedRate(explosionThread, 0, 500,
-				TimeUnit.MILLISECONDS);
+		explosionKiller.scheduleAtFixedRate(explosionThread, 0, 500, TimeUnit.MILLISECONDS);
 
 		createCircle = new ScheduledThreadPoolExecutor(1);
 		// GameState.setCircleDelay(1600);
 
-		createCircle.scheduleAtFixedRate(circleThread, 1000, 1600,
-				TimeUnit.MILLISECONDS);
+		createCircle.scheduleAtFixedRate(circleThread, 1000, 1600, TimeUnit.MILLISECONDS);
 
 		// makeExecThread();
 		// executorStatus = new ScheduledThreadPoolExecutor(1);
@@ -627,37 +596,73 @@ public class MainGameActivity extends Activity {
 		}
 	}
 
+	private void restartGameThread(String whichMethod, Exception ex) {
+		ex.printStackTrace();
+		logger.localDebugLog(1, "restartGameThread", whichMethod + "\n\t" + ex.getMessage());
+		gameExecutor.shutdownNow();
+		gameExecutor = new ScheduledThreadPoolExecutor(1);
+		gameExecutor.scheduleAtFixedRate(gameThread, 0, 1000 / 30, TimeUnit.MILLISECONDS);
+	}
+
 	private void update() {
 		float deltaMilli = getDeltaTimeMilli();
 		// playSound('s');
-		bucket.rotateBucket(catchMe.getRotateDegrees());
+		checkHealth();
+		try {
+			bucket.rotateBucket(catchMe.getRotateDegrees());
+		} catch (Exception ex) {
+			restartGameThread("rotateBucket", ex);
+		}
 		// check any modes
 		if (fuelBar.isInUse()) {
 			bucket.whiteBucket();
 		} else {
 			bucket.normalBucket();
 		}
-		// update BG
-		bgStars.update(deltaMilli);
-		// update circle positions
-		fOContainer.updateCirclePositions(deltaMilli);
-		// update fuel Bars
-		fuelBar.update(deltaMilli);
-		healthBar.update(deltaMilli);
-		checkCollisions();
-		// gameCanvasView.postInvalidate();
+		try {
+			// update BG
+			bgStars.update(deltaMilli);
+		} catch (Exception ex) {
+			restartGameThread("bgStarsUpdate", ex);
+		}
+		try {
+			// update circle positions
+			fOContainer.updateCirclePositions(deltaMilli);
+		} catch (Exception ex) {
+			restartGameThread("fOCont Update Pos", ex);
+		}
+		try {
+			// update fuel Bars
+			fuelBar.update(deltaMilli);
+		} catch (Exception ex) {
+			restartGameThread("fuelBarUpdate", ex);
+		}
+		try {
+			healthBar.update(deltaMilli);
+		} catch (Exception ex) {
+			restartGameThread("healthBarUpdate", ex);
+		}
+		try {
+			checkCollisions();
+		} catch (Exception ex) {
+			restartGameThread("checkColl", ex);
+		}
+		try {
+			gameCanvasView.postInvalidate();
+		} catch (Exception ex) {
+			restartGameThread("GCV", ex);
+		}
+
 	}
 
 	private synchronized void upDateHighScore() {
 		final String TAG = "PrefStores";
 		// setting preferences
-		prefs = this.getSharedPreferences(CatchMe.PREF_FILE_NAME,
-				Context.MODE_PRIVATE);
+		prefs = this.getSharedPreferences(CatchMe.PREF_FILE_NAME, Context.MODE_PRIVATE);
 		editor = prefs.edit();
-		logger.localDebugLog(2, TAG,
-				"PUT High Score: " + catchMe.getHighScore());
+		logger.localDebugLog(2, TAG, "PUT High Score: " + catchMe.getHighScore());
 
-		LinkedList<Integer> scores = catchMe.getSortedHighScores();
+		LinkedList<Integer> scores = catchMe.insertAndSortNewHighScore();
 		editor.putInt("HighScore", scores.get(0));
 		editor.putInt("HighScore1", scores.get(1));
 		editor.putInt("HighScore2", scores.get(2));
