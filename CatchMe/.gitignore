@@ -2,3 +2,5 @@
 .DS_Store
 /.tf
 /.tf1
+/.gitignore
+/proguard-project.txt

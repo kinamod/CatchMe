@@ -113,7 +113,7 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 		drawExplosions(canvas);
 		drawBars(canvas);
 		drawCircles(canvas);
-		invalidate();
+		// invalidate();
 	}
 
 	@Override

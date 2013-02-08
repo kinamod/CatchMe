@@ -1,5 +1,4 @@
 V 1.1.0
-NOW NEEDS API-5 Eclair
 Menu screen added, allows:
 	Mute music,
 	Mute the sound FX,
@@ -7,7 +6,7 @@ Menu screen added, allows:
 
 Works with older devices.
 
-Top 5 high scores
+Local and Global High Scores
 
 Bug fixes.
 

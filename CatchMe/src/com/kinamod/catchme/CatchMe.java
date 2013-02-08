@@ -11,8 +11,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import android.app.Application;
+import android.content.Context;
 import android.graphics.Point;
-import android.media.MediaPlayer;
+import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.view.Display;
 
@@ -22,19 +23,10 @@ import com.kinamod.catchme.util.MathsHelper;
 public class CatchMe extends Application {
 	public static final String AD_UNIT_ID = "a150f5362111431";
 	public static final String PREF_FILE_NAME = "CatchMePrefsFile";
-
 	private static CatchMe singleton;
+	private static Vibrator vib;
 
-	// HI
-	public static CatchMe getInstance() {
-		if (singleton == null) {
-
-			singleton = new CatchMe();
-		}
-		return singleton;
-	}
-
-	private boolean aNewHighScore = false;
+	// private boolean aNewHighScore = false;
 	private int bucketSize;
 
 	private int circleDelay;
@@ -49,8 +41,16 @@ public class CatchMe extends Application {
 
 	private Point screenSize = new Point(), centrePoint;
 
-	private boolean vibrateON = true, musicON = true, highSensitivity = false,
-			soundFX = true, invertTilt = false;
+	private boolean vibrateON = true, musicON = true, highSensitivity = false, soundFX = true,
+			invertTilt = false;
+	private boolean scoreSubmitted = false, firstPlayed = false;
+
+	public static CatchMe getInstance() {
+		if (singleton == null) {
+			singleton = new CatchMe();
+		}
+		return singleton;
+	}
 
 	public void decPink(int take) {
 		multiplier = 1;
@@ -98,16 +98,20 @@ public class CatchMe extends Application {
 		return screenSize;
 	}
 
-	public LinkedList<Integer> getSortedHighScores() {
+	public LinkedList<Integer> insertAndSortNewHighScore() {
+
 		for (int i = 0; i < highScores.size(); i++) {
 			if (score >= highScores.get(i)) {
 				highScores.add(i, score);
 				highScores.removeLast();
 				highScores.addLast(i);
-				aNewHighScore = true;
+				// aNewHighScore = true;
 				return highScores;
 			}
 		}
+		// If there is no high score, the flag for which it is is removed
+		highScores.removeLast();
+		highScores.addLast(-1);
 		return highScores;
 	}
 
@@ -144,9 +148,9 @@ public class CatchMe extends Application {
 		return musicON;
 	}
 
-	public boolean isNewHighScore() {
-		return aNewHighScore;
-	}
+	// public boolean isNewHighScore() {
+	// return aNewHighScore;
+	// }
 
 	public boolean isSoundFX() {
 		return soundFX;
@@ -175,7 +179,7 @@ public class CatchMe extends Application {
 		levelScore = 0;
 		level = 1;
 		gameOver = false;
-		aNewHighScore = false;
+		// aNewHighScore = false;
 		multiplier = 1;
 	}
 
@@ -189,6 +193,7 @@ public class CatchMe extends Application {
 
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
+		setScoreSubmitted(false);
 	}
 
 	public void setHighScores(Collection<Integer> scores) {
@@ -203,11 +208,8 @@ public class CatchMe extends Application {
 		invertTilt = in;
 	}
 
-	public void setMusicON(boolean musicON, MediaPlayer player) {
+	public void setMusicON(boolean musicON) {
 		this.musicON = musicON;
-		if (!musicON) {
-			player.pause();
-		}
 	}
 
 	public void setRotateDegrees(float in) {
@@ -215,13 +217,18 @@ public class CatchMe extends Application {
 			rotateDegrees = -in;
 		} else {
 			rotateDegrees = in;
-			// hi
 		}
 	}
 
+	public void vibrate(int duration) {
+		if (vib == null) {
+			vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		}
+		vib.vibrate(duration);
+	}
+
 	public void setScreenSize(MainGameActivity mainGameActivity) {
-		Display display = mainGameActivity.getWindowManager()
-				.getDefaultDisplay();
+		Display display = mainGameActivity.getWindowManager().getDefaultDisplay();
 		DisplayMetrics outMetrics = new DisplayMetrics();
 
 		display.getMetrics(outMetrics);
@@ -236,6 +243,22 @@ public class CatchMe extends Application {
 
 	public void setVibrate(boolean vibrate) {
 		this.vibrateON = vibrate;
+	}
+
+	public boolean isScoreSubmitted() {
+		return scoreSubmitted;
+	}
+
+	public void setScoreSubmitted(boolean scoreSubmitted) {
+		this.scoreSubmitted = scoreSubmitted;
+	}
+
+	public boolean isFirstPlayed() {
+		return firstPlayed;
+	}
+
+	public void firstPlayed() {
+		this.firstPlayed = true;
 	}
 
 }
