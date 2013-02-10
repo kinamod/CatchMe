@@ -51,6 +51,7 @@ public class MainGameActivity extends SwarmActivity {
 	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
 	private static MainGameActivity MAIN_GAME_ACTIVITY;
 	private static int noCircles = 0;
+	SurfaceHolder surfaceHolder;
 
 	public static MainGameActivity getInstance() {
 		if (MAIN_GAME_ACTIVITY == null) {
@@ -301,8 +302,8 @@ public class MainGameActivity extends SwarmActivity {
 
 	private void makeGameSurfaceTransparent(SurfaceView sfvTrack) {
 		sfvTrack.setZOrderOnTop(true); // necessary
-		SurfaceHolder sfhTrack = sfvTrack.getHolder();
-		sfhTrack.setFormat(PixelFormat.TRANSPARENT);
+		surfaceHolder = sfvTrack.getHolder();
+		surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
 	}
 
 	private void makeGameThread() {
@@ -310,6 +311,7 @@ public class MainGameActivity extends SwarmActivity {
 			@Override
 			public void run() {
 				update();
+
 			}
 		};
 		// gameThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler()
@@ -563,6 +565,7 @@ public class MainGameActivity extends SwarmActivity {
 		bgStars = new BackgroundStars(this);
 
 		gameCanvasView = new GameCanvas(this, this);
+
 	}
 
 	private void startGame() {
@@ -647,11 +650,19 @@ public class MainGameActivity extends SwarmActivity {
 		} catch (Exception ex) {
 			restartGameThread("checkColl", ex);
 		}
+		drawSurfaceView();
+	}
+
+	private void drawSurfaceView() {
+		// Canvas canvas = surfaceHolder.lockCanvas();
+
 		try {
-			gameCanvasView.postInvalidate();
+			// gameCanvasView.postInvalidate();
+			gameCanvasView.requestDraw();
 		} catch (Exception ex) {
 			restartGameThread("GCV", ex);
 		}
+		// surfaceHolder.unlockCanvasAndPost(canvas);
 
 	}
 

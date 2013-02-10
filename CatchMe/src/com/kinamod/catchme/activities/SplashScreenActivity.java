@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kinamod.catchme.R;
-import com.kinamod.catchme.util.SwarmHandler;
 import com.swarmconnect.SwarmActivity;
 
 public class SplashScreenActivity extends SwarmActivity {
@@ -23,7 +22,7 @@ public class SplashScreenActivity extends SwarmActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.splash_screen);
-		com.swarmconnect.Swarm.preload(this, SwarmHandler.SWARM_ID, SwarmHandler.SWARM_KEY);
+		//com.swarmconnect.Swarm.preload(this, SwarmHandler.SWARM_ID, SwarmHandler.SWARM_KEY);
 
 		Handler handler = new Handler();
 

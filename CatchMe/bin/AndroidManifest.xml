@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="3" android:versionName="2.0.0" package="com.kinamod.catchme">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="4" android:versionName="2.0.1" package="com.kinamod.catchme">
 
     <uses-sdk android:minSdkVersion="5" android:targetSdkVersion="17"/>
 	<uses-permission android:name="android.permission.VIBRATE"/>
@@ -23,4 +23,7 @@
         
         <service android:name="com.swarmconnect.NotificationService" android:process=":swarm"/>
     </application>
+    
+	<!-- Required if using the Swarm Store features. Not required otherwise. -->
+	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 </manifest>

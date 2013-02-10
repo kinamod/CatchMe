@@ -7,10 +7,12 @@
  */
 package com.kinamod.catchme.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -31,6 +33,7 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 	// TESTING ROTATION
 	int of360 = 0;
 	String scoreString = "", highScoreString = "";
+	Canvas thisCanvas;
 
 	public GameCanvas(Context context) {
 		super(context);
@@ -80,9 +83,16 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 
 	@Override
 	public void onDraw(Canvas canvas) {
+
+	}
+
+	private void drawEverything() {
+		Canvas canvas = getHolder().lockCanvas();
 		final String TAG = "onDraw";
 		mPaint.setColor(Color.rgb(200, 200, 200));
+		canvas.drawColor(Color.BLACK, PorterDuff.Mode.CLEAR);
 		drawBackgroundStars(canvas);
+
 		// if (catchMe.getMultiplier() > 1) {
 		// canvas.drawText(scoreString + catchMe.getScore() + " x " +
 		// catchMe.getMultiplier(), 0, 50, mPaint);
@@ -90,11 +100,9 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 		canvas.drawText(scoreString + catchMe.getScore(), 0, 50, mPaint);
 		// }
 		if (catchMe.getScore() > catchMe.getHighScore()) {
-			canvas.drawText(highScoreString + catchMe.getScore(), 240, 50,
-					mPaint);
+			canvas.drawText(highScoreString + catchMe.getScore(), 240, 50, mPaint);
 		} else {
-			canvas.drawText(highScoreString + catchMe.getHighScore(), 240, 50,
-					mPaint);
+			canvas.drawText(highScoreString + catchMe.getHighScore(), 240, 50, mPaint);
 		}
 
 		/*
@@ -114,6 +122,7 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 		drawBars(canvas);
 		drawCircles(canvas);
 		// invalidate();
+		getHolder().unlockCanvasAndPost(canvas);
 	}
 
 	@Override
@@ -133,5 +142,12 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 			catchMe.setRotateDegrees(MathsHelper.xAndYtoDegrees(orientX,
 					orientY));
 		}
+	}
+
+	@SuppressLint("WrongCall")
+	public void requestDraw() {
+		// onDraw(canvas);
+		// invalidate();
+		drawEverything();
 	}
 }

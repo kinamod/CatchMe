@@ -62,6 +62,7 @@ public class HomeScreenActivity extends SwarmActivity {
 
 	// SWARM listeners ==============
 	DialogInterface.OnClickListener swarmDashListener = new DialogInterface.OnClickListener() {
+		@Override
 		public void onClick(DialogInterface dia, int id) {
 			Swarm.showDashboard();
 		}
@@ -221,8 +222,8 @@ public class HomeScreenActivity extends SwarmActivity {
 		AlphaAnimation alphaDown = new AlphaAnimation(1.0f, 0f);
 		alphaDown.setDuration(500);
 
-		TranslateAnimation translate = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0,
-				Animation.ABSOLUTE, -300, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
+		TranslateAnimation translate = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.ABSOLUTE, -300,
+				Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
 		translate.setDuration(500);
 		alphaDown.setAnimationListener(new AnimationListener() {
 
@@ -243,8 +244,8 @@ public class HomeScreenActivity extends SwarmActivity {
 				for (int i = 0; i < whiteButtons.length; i++) {
 					setButtonOpacity(0, i);
 				}
-				TranslateAnimation goRight = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0,
-						Animation.ABSOLUTE, 400, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
+				TranslateAnimation goRight = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.ABSOLUTE,
+						400, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
 				goRight.setDuration(500);
 				findViewById(R.id.buttonHighScores).startAnimation(goRight);
 				findViewById(R.id.buttonHowToPlay).startAnimation(goRight);
@@ -341,7 +342,9 @@ public class HomeScreenActivity extends SwarmActivity {
 		AdRequest request = new AdRequest();
 		request.addTestDevice(AdRequest.TEST_EMULATOR);
 		request.setGender(AdRequest.Gender.MALE);
-		request.addTestDevice("D1AA72C9A2A1C5A11117338EA973D814");
+		request.addTestDevice("D1AA72C9A2A1C5A11117338EA973D814");// my one s
+		request.addTestDevice("BD7312D29024948D23A2FD559B4BFDD9");// chris'
+																	// nexus
 		adView.loadAd(request);
 	}
 

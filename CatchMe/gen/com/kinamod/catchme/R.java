@@ -130,31 +130,31 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int yellowball=0x7f020066;
     }
     public static final class id {
-        public static final int ImageView01=0x7f080015;
-        public static final int ImageView02=0x7f080016;
-        public static final int ImageView03=0x7f080017;
-        public static final int ImageView04=0x7f080019;
-        public static final int ImageView05=0x7f080009;
-        public static final int ImageView06=0x7f08000a;
-        public static final int ImageView07=0x7f08000b;
-        public static final int ImageView08=0x7f08000c;
-        public static final int ImageView09=0x7f08000d;
+        public static final int ImageView01=0x7f080008;
+        public static final int ImageView02=0x7f080009;
+        public static final int ImageView03=0x7f08000a;
+        public static final int ImageView04=0x7f08000b;
+        public static final int ImageView05=0x7f080014;
+        public static final int ImageView06=0x7f080015;
+        public static final int ImageView07=0x7f080016;
+        public static final int ImageView08=0x7f080017;
+        public static final int ImageView09=0x7f080018;
         public static final int accept=0x7f080040;
         public static final int achievement_icon=0x7f08001e;
         public static final int actTwo_mainSurfaceView=0x7f080000;
-        public static final int adLinearLayout=0x7f080018;
+        public static final int adLinearLayout=0x7f080005;
         public static final int add=0x7f08003b;
         public static final int add_friend_username=0x7f08003a;
         public static final int benefits=0x7f08002c;
-        public static final int buttToggleInvert=0x7f080010;
-        public static final int buttToggleMusic=0x7f080011;
-        public static final int buttToggleSens=0x7f08000f;
-        public static final int buttToggleSound=0x7f08000e;
-        public static final int buttToggleVibrate=0x7f080012;
-        public static final int buttonHighScores=0x7f08001b;
-        public static final int buttonHowToPlay=0x7f08001d;
-        public static final int buttonOptions=0x7f08001c;
-        public static final int buttonStartGame=0x7f08001a;
+        public static final int buttToggleInvert=0x7f08001b;
+        public static final int buttToggleMusic=0x7f08001c;
+        public static final int buttToggleSens=0x7f08001a;
+        public static final int buttToggleSound=0x7f080019;
+        public static final int buttToggleVibrate=0x7f08001d;
+        public static final int buttonHighScores=0x7f08000d;
+        public static final int buttonHowToPlay=0x7f08000f;
+        public static final int buttonOptions=0x7f08000e;
+        public static final int buttonStartGame=0x7f08000c;
         public static final int cancel=0x7f080036;
         public static final int change_pass=0x7f080071;
         public static final int close=0x7f080048;
@@ -193,7 +193,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int logout=0x7f080073;
         public static final int lost_password=0x7f080062;
         public static final int mail=0x7f080057;
-        public static final int menuView=0x7f080005;
+        public static final int menuView=0x7f080010;
         public static final int message=0x7f080056;
         public static final int more=0x7f08005b;
         public static final int name=0x7f080023;
@@ -218,7 +218,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int publisher=0x7f080024;
         public static final int purchase=0x7f080068;
         public static final int rank=0x7f080059;
-        public static final int realMenuButtonLayout=0x7f080008;
+        public static final int realMenuButtonLayout=0x7f080013;
         public static final int recommended_app_holder=0x7f080054;
         public static final int recommended_app_holder_underline=0x7f080055;
         public static final int reply=0x7f080077;
@@ -237,7 +237,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int sheader_title=0x7f08004b;
         public static final int speech_bubble=0x7f080079;
         public static final int splashScreen=0x7f080001;
-        public static final int startingView=0x7f080013;
+        public static final int startingView=0x7f080006;
         public static final int submit=0x7f080065;
         public static final int success=0x7f080066;
         public static final int swarm_login=0x7f08005d;
@@ -253,9 +253,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int username_error=0x7f080025;
         public static final int wallet=0x7f080044;
         public static final int webview=0x7f08007d;
-        public static final int whiteMenuButtonLayout=0x7f080007;
-        public static final int wholeScreen1=0x7f080014;
-        public static final int wholeScreen2=0x7f080006;
+        public static final int whiteMenuButtonLayout=0x7f080012;
+        public static final int wholeScreen1=0x7f080007;
+        public static final int wholeScreen2=0x7f080011;
     }
     public static final class layout {
         public static final int game_screen_layout=0x7f030000;
