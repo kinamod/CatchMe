@@ -407,22 +407,22 @@ public class MainGameActivity extends SwarmActivity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	private void pause() {
-		player.pause();
-		catchMe.setPaused(true);
-		if (createCircle != null) {
-			createCircle.shutdown();
-		}
-		if (fRFill != null) {
-			fRFill.shutdown();
-		}
-	}
-
-	private void unPause() {
-		catchMe.setPaused(false);
-		player.start();
-		triggerGameAnimation(1000);
-	}
+	// private void pause() {
+	// player.pause();
+	// catchMe.setPaused(true);
+	// if (createCircle != null) {
+	// createCircle.shutdown();
+	// }
+	// if (fRFill != null) {
+	// fRFill.shutdown();
+	// }
+	// }
+	//
+	// private void unPause() {
+	// catchMe.setPaused(false);
+	// player.start();
+	// triggerGameAnimation(1000);
+	// }
 
 	public void gameOver() {
 
