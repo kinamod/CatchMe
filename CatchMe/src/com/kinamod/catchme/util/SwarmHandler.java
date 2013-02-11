@@ -15,11 +15,14 @@ public class SwarmHandler {
 	public static final int SWARM_ACH_OVER50 = 9228;
 	public static final int SWARM_ACH_OVER100 = 9231;
 	public static final int SWARM_ACH_OVER200 = 9297;
+	public static final int SWARM_ACH_OVER500 = 9738;
+	public static final int SWARM_ACH_OVER1000 = 9741;
+
 	public static final String SWARM_KEY = "2dfc6c0404b19b5ae69eaf28db852ac0";
 	public static final int SWARM_ID = 3732;
 	public static final int LDBOARD_ONE = 5808;
 
-	private static boolean loggedIn;
+	private static boolean loggedIn = false;
 	private static boolean loginOffered = false;
 
 	// METHODS = = = = = = = = = = = = = = = = = = = = = =

@@ -7,6 +7,7 @@
  */
 package com.kinamod.catchme.activities;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -48,7 +49,7 @@ import com.kinamod.catchme.util.SoundPoolCatchMe;
 import com.swarmconnect.SwarmActivity;
 
 public class MainGameActivity extends SwarmActivity {
-	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
+	private static final CustomisedLogging logger = new CustomisedLogging(true, false);
 	private static MainGameActivity MAIN_GAME_ACTIVITY;
 	private static int noCircles = 0;
 	SurfaceHolder surfaceHolder;
@@ -82,16 +83,18 @@ public class MainGameActivity extends SwarmActivity {
 			logger.localDebugLog(2, TAG, "onTouch");
 			if (action == MotionEvent.ACTION_DOWN) {
 				if (catchMe.isPaused()) {
-					unPause();
+					// unPause();
+					onResume();
 					return true;
 				}
-				if (catchMe.isGameRunning()) {
+				if (!catchMe.isGameStopped()) {
 					if (fuelBar.getCount() > 0) {
 						fuelBar.setInUse(true);
 						playSound('z');
 					}
 				} else {
 					triggerGameAnimation(0);
+					catchMe.setGameStopped(false);
 				}
 			} else if (action == MotionEvent.ACTION_UP) {
 				fuelBar.setInUse(false);
@@ -105,6 +108,7 @@ public class MainGameActivity extends SwarmActivity {
 	private SharedPreferences prefs;
 
 	private SoundPoolCatchMe soundPool;
+	private boolean restarting;
 
 	private void checkCollisions() {
 		final String TAG = "checkCollisons";
@@ -114,15 +118,15 @@ public class MainGameActivity extends SwarmActivity {
 		int bucketHalfSize = bucket.getHalfBucketSize();
 		float perpDistance;
 		for (int bucketSide = 0; bucketSide < 4; bucketSide++) {
-			logger.localDebugLog(1, TAG, "Check side: " + bucketSide);
+			logger.localDebugLog(2, TAG, "Check side: " + bucketSide);
 			for (int whichCircle = 0; whichCircle < fOContainer.size(); whichCircle++) {
-				logger.localDebugLog(1, TAG, "Check circle: " + whichCircle);
+				logger.localDebugLog(2, TAG, "Check circle: " + whichCircle);
 				boolean shouldICheck = fOContainer.shouldICheck(whichCircle, bucketHalfSize);
 				if (!shouldICheck) {
-					logger.localDebugLog(1, TAG, "Dont check");
+					logger.localDebugLog(2, TAG, "Dont check");
 					continue;
 				}
-				logger.localDebugLog(1, TAG, "Check");
+				logger.localDebugLog(2, TAG, "Check");
 				circle = MathsHelper.subtractPointFP(fOContainer.get(whichCircle).getPosition(),
 						MathsHelper.dividePoint(catchMe.getScreenSize(), 2));
 				fromLineAye = MathsHelper.subtractPointF(circle, bucket.getBucketLine(bucketSide).getAye());
@@ -185,6 +189,7 @@ public class MainGameActivity extends SwarmActivity {
 
 	private void endExecutors() {
 		gameExecutor.shutdown();
+		explosionKiller.shutdown();
 	}
 
 	// private void makeExecThread() {
@@ -199,17 +204,6 @@ public class MainGameActivity extends SwarmActivity {
 	// }
 	// };
 	// }
-
-	public void gameOver() {
-		endExecutors();
-		Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
-		upDateHighScore();
-		catchMe.setPaused(false);
-		catchMe.setGameOver(true);
-		startActivity(intent);
-
-		finish();
-	}
 
 	private void generateCircle() {
 		noCircles++;
@@ -277,7 +271,7 @@ public class MainGameActivity extends SwarmActivity {
 
 				if (delay > 1050) {
 					delay -= 10;
-					logger.localDebugLog(1, "FallingFreq", "Next Fall: " + delay);
+					logger.localDebugLog(2, "FallingFreq", "Next Fall: " + delay);
 				}
 
 				createCircle.schedule(this, delay, TimeUnit.MILLISECONDS);
@@ -328,7 +322,7 @@ public class MainGameActivity extends SwarmActivity {
 		//
 		// @Override
 		// public void uncaughtException(Thread t, Throwable e) {
-		// logger.localDebugLog(1, "Uncaught Exception", e.getMessage());
+		// logger.localDebugLog(2, "Uncaught Exception", e.getMessage());
 		// }
 		// });
 		// }
@@ -349,7 +343,7 @@ public class MainGameActivity extends SwarmActivity {
 						ex.printStackTrace();
 					}
 				} catch (IllegalStateException ex) {
-					logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + ex.getCause());
+					logger.localDebugLog(2, "MediaPlayer", "IllegalStateException:\n" + ex.getCause());
 				}
 			}
 		};
@@ -403,8 +397,10 @@ public class MainGameActivity extends SwarmActivity {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
 			if (catchMe.isPaused()) {
 				gameOver();
-			} else if (catchMe.isGameRunning()) {
-				pause();
+			} else if (!catchMe.isGameStopped()) {
+				onPause();
+			} else {
+				gameOver();
 			}
 			return true;
 		}
@@ -428,41 +424,63 @@ public class MainGameActivity extends SwarmActivity {
 		triggerGameAnimation(1000);
 	}
 
+	public void gameOver() {
+
+		logger.localDebugLog(1, "StateChnage", "gameOver");
+		endExecutors();
+		// pause();
+		Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
+		upDateHighScore();
+
+		catchMe.setPaused(false);
+		catchMe.setGameOver(true);
+		catchMe.setGameStopped(true);
+
+		startActivity(intent);
+
+		finish();
+	}
+
 	@Override
 	protected void onPause() {
+		logger.localDebugLog(1, "StateChnage", "onPause");
 		super.onPause();
 		final String TAG = "StopResume";
-		pause();
-		logger.localDebugLog(2, TAG, "onPause");
-		endExecutors();
-		mSensorManager.unregisterListener(gameCanvasView);
-		try {
-			if (!(player == null)) {
-				player.pause();
-			}
-		} catch (IllegalStateException e) {
-			logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + e.getCause());
+		if (restarting) {
+			restarting = false;
 		}
+		if (createCircle != null) {
+			createCircle.shutdown();
+		}
+		if (fRFill != null) {
+			fRFill.shutdown();
+		}
+		logger.localDebugLog(2, TAG, "onPause");
+		// endExecutors();
+		// mSensorManager.unregisterListener(gameCanvasView);
+		// try {
+		// if (!(player == null)) {
+		// player.pause();
+		// }
+		// } catch (IllegalStateException e) {
+		// logger.localDebugLog(2, "MediaPlayer", "IllegalStateException:\n" +
+		// e.getCause());
+		// }
+		catchMe.setPaused(true);
 	}
 
 	@Override
 	public void onStart() {
+		logger.localDebugLog(1, "StateChnage", "onStart");
 		super.onStart();
-		if (!catchMe.isGameRunning()) {
-		startGame();
+		if (catchMe.isGameOver() || catchMe.isGameStopped()) {
+			startGame();
+		} else if (catchMe.isPaused()) {
+			restarting = true;
 		}
-	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// final String TAG = "StopResume";
-		if (catchMe.isPaused()) {
-		restartGameThread();
-		}
 		if (Build.VERSION.SDK_INT <= 8) {
-			mSensorManager.registerListener(gameCanvasView,
-					mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+			mSensorManager.registerListener(gameCanvasView, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 					SensorManager.SENSOR_DELAY_GAME);
 		} else {
 			// Sensor.TYPE_GRAVITY( = 9) introduced in API 9(2.3 Gingerbread)
@@ -471,20 +489,64 @@ public class MainGameActivity extends SwarmActivity {
 		}
 	}
 
+	@Override
+	public void onRestart() {
+		logger.localDebugLog(1, "StateChnage", "onRestart");
+		super.onRestart();
+		restartGameThread();
+
+		bgStars.loadImage(this);
+		if (!FallingObjectContainer.bitMapsSetUp()) {
+			FallingObjectContainer.setUpBitMaps(this);
+		}
+		if (!BackgroundStars.bitMapLoaded()) {
+			bgStars.loadImage(this);
+		}
+		try {
+			player.prepare();
+			// unPause();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	protected void onResume() {
+		logger.localDebugLog(1, "StateChnage", "onResume");
+		super.onResume();
+		// final String TAG = "StopResume";
+		if (restarting) {
+			onPause();
+		} else if (catchMe.isPaused() && !catchMe.isGameStopped()) {
+			// restartGameThread();
+			// player.start();
+			// triggerGameAnimation(1000);
+
+			triggerGameAnimation(1000);
+			catchMe.setPaused(false);
+		}
+	}
+
 
 	@Override
 	protected void onStop() {
+		logger.localDebugLog(1, "StateChnage", "onStop");
 		final String TAG = "StopResume";
 		logger.localDebugLog(2, TAG, "onStop");
 		mSensorManager.unregisterListener(gameCanvasView);
+		endExecutors();
 		if (!(player == null)) {
 			try {
 				player.stop();
 			} catch (IllegalStateException e) {
-				logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + e.getCause());
+				logger.localDebugLog(2, "MediaPlayer", "IllegalStateException:\n" + e.getCause());
 			}
 			player.release();
 		}
+		catchMe.setGameStopped(true);
 		bgStars.releaseBitmap();
 		FallingObjectContainer.releaseBitMaps();
 		super.onStop();
@@ -643,11 +705,14 @@ public class MainGameActivity extends SwarmActivity {
 
 		if (ex != null) {
 			ex.printStackTrace();
-		logger.localDebugLog(1, "restartGameThread", whichMethod + "\n\t" + ex.getMessage());
+			logger.localDebugLog(2, "restartGameThread", whichMethod + "\n\t" + ex.getMessage());
 		}
-		gameExecutor.shutdownNow();
+		if (gameExecutor != null) {
+			gameExecutor.shutdownNow();
+		}
 		gameExecutor = new ScheduledThreadPoolExecutor(1);
 		gameExecutor.scheduleAtFixedRate(gameThread, 0, 1000 / 30, TimeUnit.MILLISECONDS);
+		catchMe.setGameStopped(false);
 	}
 
 	private void update() {
@@ -703,18 +768,17 @@ public class MainGameActivity extends SwarmActivity {
 	}
 
 	private void triggerGameAnimation(int delay) {
-		catchMe.setGameRunning(true);
 		createCircle = new ScheduledThreadPoolExecutor(1);
 		createCircle.schedule(circleThread, delay, TimeUnit.MILLISECONDS);
 		fRFill = new ScheduledThreadPoolExecutor(1);
 		fRFill.scheduleAtFixedRate(fuelRefillThread, delay, 500, TimeUnit.MILLISECONDS);
 
-		if (!FallingObjectContainer.bitMapsSetUp()) {
-			FallingObjectContainer.setUpBitMaps(this);
-		}
-		if (!BackgroundStars.bitMapLoaded()) {
-			bgStars.loadImage(this);
-		}
+		// if (!FallingObjectContainer.bitMapsSetUp()) {
+		// FallingObjectContainer.setUpBitMaps(this);
+		// }
+		// if (!BackgroundStars.bitMapLoaded()) {
+		// bgStars.loadImage(this);
+		// }
 	}
 
 	private void drawSurfaceView() {

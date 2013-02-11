@@ -126,7 +126,7 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 		if (!catchMe.isPaused()) {
 		drawCircles(canvas);
 		}
-		if (!catchMe.isGameRunning() || catchMe.isPaused()) {
+		if (catchMe.isGameStopped() || catchMe.isPaused()) {
 			float beforeSize = mPaint.getTextSize();
 			mPaint.setColor(Color.rgb(200, 200, 200));
 			if (textSize > 60 || textSize < 40) {

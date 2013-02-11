@@ -18,6 +18,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 
 import com.kinamod.catchme.activities.MainGameActivity;
+import com.kinamod.catchme.util.CustomisedLogging;
 import com.kinamod.catchme.util.MathsHelper;
 
 public class CatchMe extends Application {
@@ -25,6 +26,8 @@ public class CatchMe extends Application {
 	public static final String PREF_FILE_NAME = "CatchMePrefsFile";
 	private static CatchMe singleton;
 	private static Vibrator vib;
+
+	private static final CustomisedLogging logger = new CustomisedLogging(true, false);
 
 	// private boolean aNewHighScore = false;
 	private int bucketSize;
@@ -43,7 +46,7 @@ public class CatchMe extends Application {
 
 	private boolean vibrateON = true, musicON = true, highSensitivity = false, soundFX = true,
 			invertTilt = false;
-	private boolean scoreSubmitted = false, firstPlayed = false, gameRunning = false;
+	private boolean scoreSubmitted = false, firstPlayed = false, gameStopped = true;
 
 	public static CatchMe getInstance() {
 		if (singleton == null) {
@@ -185,9 +188,9 @@ public class CatchMe extends Application {
 	}
 
 	private void resetState() {
-		setGameOver(false);
 		setPaused(false);
-		setGameRunning(false);
+		setGameStopped(true);
+		setGameOver(false);
 	}
 
 	public void setCircleBucketFour(int circleDelay, int bucketSize) {
@@ -199,6 +202,7 @@ public class CatchMe extends Application {
 	}
 
 	public void setGameOver(boolean gameOver) {
+		logger.localDebugLog(1, "StateChnage", "setGameOver(" + gameOver + ")");
 		this.gameOver = gameOver;
 		setScoreSubmitted(false);
 	}
@@ -268,12 +272,13 @@ public class CatchMe extends Application {
 		this.firstPlayed = true;
 	}
 
-	public boolean isGameRunning() {
-		return gameRunning;
+	public boolean isGameStopped() {
+		return gameStopped;
 	}
 
-	public void setGameRunning(boolean gameRunning) {
-		this.gameRunning = gameRunning;
+	public void setGameStopped(boolean gameStopped) {
+		logger.localDebugLog(1, "StateChnage", "setGameStopped(" + gameStopped + ")");
+		this.gameStopped = gameStopped;
 	}
 
 	public boolean isPaused() {
@@ -281,6 +286,7 @@ public class CatchMe extends Application {
 	}
 
 	public void setPaused(boolean paused) {
+		logger.localDebugLog(1, "StateChnage", "setPaused(" + paused + ")");
 		this.paused = paused;
 	}
 

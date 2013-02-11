@@ -71,6 +71,22 @@ public class ScoreHandler {
 				toast.show();
 			}
 		}
+		if (catchMe.getScore() >= 500) {
+			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER500)) {
+				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER500);
+				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast500),
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		}
+		if (catchMe.getScore() >= 1000) {
+			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER1000)) {
+				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER1000);
+				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast1000),
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		}
 	}
 
 	public void makeHighScoreDialog(String inString, boolean gameOvr) {
@@ -159,28 +175,30 @@ public class ScoreHandler {
 			aDBuilder.setTitle(inString).setMessage(sb.toString())
 					.setPositiveButton(hSA.getResources().getString(R.string.textSwarmLogin), swarmLogin)
 					.create().show();
-		} else if (!Swarm.user.isGuestAccount()) {
-			if (!catchMe.isScoreSubmitted() && catchMe.isFirstPlayed()) {
-				aDBuilder
-						.setTitle(inString)
-						.setMessage(sb.toString())
-						.setPositiveButton(hSA.getResources().getString(R.string.textSubmitScore),
-								swarmSubmitScore).create().show();
+		} else {
+			inString = inString.concat(":  " + Swarm.user.username);
+			if (!Swarm.user.isGuestAccount()) {
+				if (!catchMe.isScoreSubmitted() && catchMe.isFirstPlayed()) {
+					aDBuilder
+							.setTitle(inString)
+							.setMessage(sb.toString())
+							.setPositiveButton(hSA.getResources().getString(R.string.textSubmitScore), swarmSubmitScore)
+							.create().show();
+				} else {
+					aDBuilder
+							.setTitle(inString)
+							.setMessage(sb.toString())
+							.setPositiveButton(hSA.getResources().getString(R.string.textGlobalLeaderboards),
+									swarmLeaderboards).create().show();
+				}
 			} else {
 				aDBuilder
 						.setTitle(inString)
 						.setMessage(sb.toString())
-						.setPositiveButton(hSA.getResources().getString(R.string.textGlobalLeaderboards),
+						.setPositiveButton(hSA.getResources().getString(R.string.textSwarmLoginFullUser), swarmLogin)
+						.setNegativeButton(hSA.getResources().getString(R.string.textGlobalLeaderboards),
 								swarmLeaderboards).create().show();
 			}
-		} else {
-			aDBuilder
-					.setTitle(inString)
-					.setMessage(sb.toString())
-					.setPositiveButton(hSA.getResources().getString(R.string.textSwarmLoginFullUser),
-							swarmLogin)
-					.setNegativeButton(hSA.getResources().getString(R.string.textGlobalLeaderboards),
-							swarmLeaderboards).create().show();
 		}
 	}
 
@@ -190,6 +208,7 @@ public class ScoreHandler {
 			catchMe.setScoreSubmitted(true);
 			SwarmLeaderboard.submitScore(SwarmHandler.LDBOARD_ONE, catchMe.getScore());
 
+			Swarm.showLeaderboards();
 		}
 	};
 	DialogInterface.OnClickListener swarmLeaderboards = new DialogInterface.OnClickListener() {
@@ -201,7 +220,7 @@ public class ScoreHandler {
 		public void onClick(DialogInterface dia, int id) {
 			// start to init swarm now...cheater
 			Swarm.logOut();
-			Swarm.init(hSA, SwarmHandler.SWARM_ID, SwarmHandler.SWARM_KEY);
+			Swarm.init(hSA, SwarmHandler.SWARM_ID, SwarmHandler.SWARM_KEY, SwarmHandler.swarmLoginListener);
 			// Swarm.init(hSA, SwarmHandler.SWARM_ID, SwarmHandler.SWARM_KEY,
 			// SwarmHandler.swarmLoginListener);
 		}

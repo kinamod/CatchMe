@@ -48,6 +48,8 @@
 	<string name="textPast50">You got past fifty points!</string>
 	<string name="textPast100">You got past one hundred points!</string>
 	<string name="textPast200">You got past two hundred points!</string>
+	<string name="textPast500">You got past five hundred points!</string>
+	<string name="textPast1000">You got past one thousand points!</string>
 	<string name="textSwarmLogin">Login for Global Leaderboards</string>
 	<string name="textSwarmloginTitle">Login to Swarm</string>
 	<string name="textSwarmLoginRequest">Would you like to login so you can be scored Globally and earn Achievements?</string>
