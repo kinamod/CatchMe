@@ -53,4 +53,7 @@
 	<string name="textSwarmLoginRequest">Would you like to login so you can be scored Globally and earn Achievements?</string>
 	<string name="textSwarmLoginFullUser">Login as Full User</string>
 	<string name="whitebutton">WhiteButton</string>
+	<string name="textTapToStart">Tap Screen to Start</string>
+	<string name="textTouchToResume">Touch to Resume</string>
+	<string name="textBackToEndGame">Press Back to End Game</string>
 </resources>

@@ -12,20 +12,24 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-import com.kinamod.catchme.CatchMe;
-
 public class HealthBar extends Bar {
-	CatchMe catchMe = CatchMe.getInstance();
-	int multiplier = 180;
 
-	public HealthBar(String label, int count) {
-		super(label, count);
+	public HealthBar(String label, int countIn) {
+		super(label, countIn);
 		Point mSize = catchMe.getScreenSize();
-		multiplier = mSize.y / (count + 1);
-		this.count = count;
-		myShape.set(mSize.x - 30, (mSize.y - 10) - (count * multiplier),
-				mSize.x - 10, mSize.y - 10);
+		decrementer = (mSize.y - 30) / 5;
+		myShape.set(mSize.x - 30, 20,
+ mSize.x - 10, mSize.y - 20);
+		incrementer = (mSize.y - 30) / (countIn / 2);
 
+		this.count = mSize.y - 50;
+	}
+
+	@Override
+	public void incCount() {
+		if (count < catchMe.getScreenSize().y - 50) {
+			count += incrementer;
+		}
 	}
 
 	@Override
@@ -41,6 +45,6 @@ public class HealthBar extends Bar {
 
 	@Override
 	public void update(float dTime) {
-		myShape.top = (catchMe.getScreenSize().y - 10) - (count * multiplier);
+		myShape.top = (catchMe.getScreenSize().y - 10) - count;
 	}
 }

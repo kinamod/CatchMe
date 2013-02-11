@@ -21,17 +21,23 @@ public class BackgroundStars {
 			rotMatrix = new Matrix();
 	Bitmap myBitmap;
 	float slavePosY = 0;
+	private static boolean bitMapLoaded = false;
 
 	public BackgroundStars(MainGameActivity mainGameActivity) {
 		bmpHeight = catchMe.getScreenSize().y;
 		bmpWidth = (int) (catchMe.getScreenSize().y * 1.3);
 		if (myBitmap == null) {
-			myBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
-					mainGameActivity.getResources(),
-							R.drawable.starrynightcopy),
-					bmpWidth, bmpHeight, false);
+			loadImage(mainGameActivity);
 			slavePosY = -bmpHeight;
 		}
+	}
+
+	public void loadImage(MainGameActivity mainGameActivity) {
+		myBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
+				mainGameActivity.getResources(),
+						R.drawable.starrynightcopy),
+				bmpWidth, bmpHeight, false);
+		bitMapLoaded = true;
 	}
 
 	public void drawBackgroundStars(Canvas canvas) {
@@ -71,5 +77,9 @@ public class BackgroundStars {
 		// slaveMtrx.setRotate(GameState.getRotateDegrees(), basePosX,
 		// slavePosY);
 		slaveMtrx.setTranslate(basePosX, slavePosY);
+	}
+
+	public static boolean bitMapLoaded() {
+		return bitMapLoaded;
 	}
 }

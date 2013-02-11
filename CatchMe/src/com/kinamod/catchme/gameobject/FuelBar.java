@@ -16,7 +16,9 @@ public class FuelBar extends Bar {
 	public FuelBar(String label, int count) {
 		super(label, count);
 		this.count = count;
-		myShape.set(114, 60, (60 + count) * 2, 85);
+		decrementer = .5f;
+		incrementer = (catchMe.getScreenSize().x - 150) / count;
+		myShape.set(114, 60, 150 + incrementer * count, 85);
 	}
 
 	@Override
@@ -35,6 +37,13 @@ public class FuelBar extends Bar {
 		return inUse;
 	}
 
+	@Override
+	public void incCount() {
+		if (count < catchMe.getScreenSize().x - 150) {
+		count += 2;
+		}
+	}
+
 	// Getters and Setters
 	public void setInUse(boolean inUse) {
 		this.inUse = inUse;
@@ -46,7 +55,7 @@ public class FuelBar extends Bar {
 			count -= dTime / 5;
 			logger.localDebugLog(1, "updateFuel", "dTime: " + dTime);
 		}
-		myShape.right = (60 + count) * 2;
+		myShape.right = 114 + incrementer * count;
 		if (count <= 0) {
 			myShape.right = 0;
 		}

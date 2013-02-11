@@ -469,6 +469,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int stringScore=0x7f060093;
         public static final int terms=0x7f060001;
         public static final int textBack=0x7f06009a;
+        public static final int textBackToEndGame=0x7f0600b1;
         public static final int textFour=0x7f06008d;
         public static final int textGameOver=0x7f060095;
         public static final int textGlobalLeaderboards=0x7f0600a4;
@@ -493,7 +494,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int textSwarmLoginFullUser=0x7f0600ad;
         public static final int textSwarmLoginRequest=0x7f0600ac;
         public static final int textSwarmloginTitle=0x7f0600ab;
+        public static final int textTapToStart=0x7f0600af;
         public static final int textTiltSensitivity=0x7f060098;
+        public static final int textTouchToResume=0x7f0600b0;
         public static final int textTwo=0x7f06008c;
         public static final int textVibrate=0x7f06009b;
         public static final int textYourScore=0x7f06009e;

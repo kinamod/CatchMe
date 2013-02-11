@@ -7,7 +7,6 @@
  */
 package com.kinamod.catchme.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -32,6 +31,7 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 	private Paint mPaint = new Paint();
 	// TESTING ROTATION
 	int of360 = 0;
+	float textSize = 50, incer = 1;
 	String scoreString = "", highScoreString = "";
 	Canvas thisCanvas;
 
@@ -88,6 +88,9 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 
 	private void drawEverything() {
 		Canvas canvas = getHolder().lockCanvas();
+		if (canvas == null) {
+			return;// TODO
+		}
 		final String TAG = "onDraw";
 		mPaint.setColor(Color.rgb(200, 200, 200));
 		canvas.drawColor(Color.BLACK, PorterDuff.Mode.CLEAR);
@@ -120,7 +123,31 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 		logger.localDebugLog(2, TAG, "onDraw");
 		drawExplosions(canvas);
 		drawBars(canvas);
+		if (!catchMe.isPaused()) {
 		drawCircles(canvas);
+		}
+		if (!catchMe.isGameRunning() || catchMe.isPaused()) {
+			float beforeSize = mPaint.getTextSize();
+			mPaint.setColor(Color.rgb(200, 200, 200));
+			if (textSize > 60 || textSize < 40) {
+				incer *= -1;
+			}
+			textSize += incer;
+			mPaint.setTextSize(textSize);
+			mPaint.setTextAlign(Paint.Align.CENTER);
+			if (catchMe.isPaused()) {
+			canvas.drawText(mainGameActivity.getResources().getString(R.string.textTouchToResume),
+					catchMe.getScreenSize().x / 2, catchMe.getScreenSize().x / 2, mPaint);
+			mPaint.setTextSize(30);
+			canvas.drawText(mainGameActivity.getResources().getString(R.string.textBackToEndGame),
+						catchMe.getScreenSize().x / 2, catchMe.getScreenSize().y / 2, mPaint);
+			} else {
+				canvas.drawText(mainGameActivity.getResources().getString(R.string.textTapToStart),
+						catchMe.getScreenSize().x / 2, catchMe.getScreenSize().x / 2, mPaint);
+			}
+			mPaint.setTextSize(beforeSize);
+			mPaint.setTextAlign(Paint.Align.LEFT);
+		}
 		// invalidate();
 		getHolder().unlockCanvasAndPost(canvas);
 	}
@@ -144,7 +171,6 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 		}
 	}
 
-	@SuppressLint("WrongCall")
 	public void requestDraw() {
 		// onDraw(canvas);
 		// invalidate();

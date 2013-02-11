@@ -81,9 +81,17 @@ public class MainGameActivity extends SwarmActivity {
 			int action = motionEvent.getAction();
 			logger.localDebugLog(2, TAG, "onTouch");
 			if (action == MotionEvent.ACTION_DOWN) {
-				if (fuelBar.getCount() > 0) {
-					fuelBar.setInUse(true);
-					playSound('z');
+				if (catchMe.isPaused()) {
+					unPause();
+					return true;
+				}
+				if (catchMe.isGameRunning()) {
+					if (fuelBar.getCount() > 0) {
+						fuelBar.setInUse(true);
+						playSound('z');
+					}
+				} else {
+					triggerGameAnimation(0);
 				}
 			} else if (action == MotionEvent.ACTION_UP) {
 				fuelBar.setInUse(false);
@@ -177,8 +185,6 @@ public class MainGameActivity extends SwarmActivity {
 
 	private void endExecutors() {
 		gameExecutor.shutdown();
-		createCircle.shutdown();
-		fRFill.shutdown();
 	}
 
 	// private void makeExecThread() {
@@ -198,6 +204,7 @@ public class MainGameActivity extends SwarmActivity {
 		endExecutors();
 		Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
 		upDateHighScore();
+		catchMe.setPaused(false);
 		catchMe.setGameOver(true);
 		startActivity(intent);
 
@@ -256,23 +263,26 @@ public class MainGameActivity extends SwarmActivity {
 
 	private void makeBars() {
 		fuelBar = new FuelBar("White: ", 100);
-		healthBar = new HealthBar("Health: ", 5);
+		healthBar = new HealthBar("Health: ", 200);
 	}
 
 	private void makeCircleThread() {
 		final String TAG = "runGame";
 		circleThread = new Thread("circleThread") {
+			int delay = 1600;
 			@Override
 			public void run() {
 				generateCircle();
 				logger.localDebugLog(2, TAG, "newCircle");
 
-				// Check for gone circles
-				fOContainer.killDeadCircles();
+				if (delay > 1050) {
+					delay -= 10;
+					logger.localDebugLog(1, "FallingFreq", "Next Fall: " + delay);
+				}
 
+				createCircle.schedule(this, delay, TimeUnit.MILLISECONDS);
 				logger.localDebugLog(2, "HowMany", "number of Circles" + fOContainer.size());
 			}
-
 		};
 	}
 
@@ -294,7 +304,7 @@ public class MainGameActivity extends SwarmActivity {
 			public void run() {
 				if (fuelBar.getCount() < 200) {
 					fuelBar.incCount();
-					fuelBar.incCount();
+					healthBar.incCount();
 				}
 			}
 		};
@@ -311,7 +321,6 @@ public class MainGameActivity extends SwarmActivity {
 			@Override
 			public void run() {
 				update();
-
 			}
 		};
 		// gameThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler()
@@ -392,15 +401,38 @@ public class MainGameActivity extends SwarmActivity {
 	// screen
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-			gameOver();
+			if (catchMe.isPaused()) {
+				gameOver();
+			} else if (catchMe.isGameRunning()) {
+				pause();
+			}
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
+	private void pause() {
+		player.pause();
+		catchMe.setPaused(true);
+		if (createCircle != null) {
+			createCircle.shutdown();
+		}
+		if (fRFill != null) {
+			fRFill.shutdown();
+		}
+	}
+
+	private void unPause() {
+		catchMe.setPaused(false);
+		player.start();
+		triggerGameAnimation(1000);
+	}
+
 	@Override
 	protected void onPause() {
+		super.onPause();
 		final String TAG = "StopResume";
+		pause();
 		logger.localDebugLog(2, TAG, "onPause");
 		endExecutors();
 		mSensorManager.unregisterListener(gameCanvasView);
@@ -411,16 +443,23 @@ public class MainGameActivity extends SwarmActivity {
 		} catch (IllegalStateException e) {
 			logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + e.getCause());
 		}
+	}
 
-		super.onPause();
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (!catchMe.isGameRunning()) {
+		startGame();
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		// final String TAG = "StopResume";
-
-		startGame();
+		if (catchMe.isPaused()) {
+		restartGameThread();
+		}
 		if (Build.VERSION.SDK_INT <= 8) {
 			mSensorManager.registerListener(gameCanvasView,
 					mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -431,6 +470,7 @@ public class MainGameActivity extends SwarmActivity {
 					SensorManager.SENSOR_DELAY_GAME);
 		}
 	}
+
 
 	@Override
 	protected void onStop() {
@@ -578,16 +618,12 @@ public class MainGameActivity extends SwarmActivity {
 		gameExecutor = new ScheduledThreadPoolExecutor(1);
 		gameExecutor.scheduleAtFixedRate(gameThread, 0, 1000 / 30, TimeUnit.MILLISECONDS);
 
-		fRFill = new ScheduledThreadPoolExecutor(1);
-		fRFill.scheduleAtFixedRate(fuelRefillThread, 0, 500, TimeUnit.MILLISECONDS);
+
 
 		explosionKiller = new ScheduledThreadPoolExecutor(1);
 		explosionKiller.scheduleAtFixedRate(explosionThread, 0, 500, TimeUnit.MILLISECONDS);
 
-		createCircle = new ScheduledThreadPoolExecutor(1);
 		// GameState.setCircleDelay(1600);
-
-		createCircle.scheduleAtFixedRate(circleThread, 1000, 1600, TimeUnit.MILLISECONDS);
 
 		// makeExecThread();
 		// executorStatus = new ScheduledThreadPoolExecutor(1);
@@ -599,9 +635,16 @@ public class MainGameActivity extends SwarmActivity {
 		}
 	}
 
+	private void restartGameThread() {
+		restartGameThread("Innocent Restart from onResume", null);
+
+	}
 	private void restartGameThread(String whichMethod, Exception ex) {
-		ex.printStackTrace();
+
+		if (ex != null) {
+			ex.printStackTrace();
 		logger.localDebugLog(1, "restartGameThread", whichMethod + "\n\t" + ex.getMessage());
+		}
 		gameExecutor.shutdownNow();
 		gameExecutor = new ScheduledThreadPoolExecutor(1);
 		gameExecutor.scheduleAtFixedRate(gameThread, 0, 1000 / 30, TimeUnit.MILLISECONDS);
@@ -611,6 +654,8 @@ public class MainGameActivity extends SwarmActivity {
 		float deltaMilli = getDeltaTimeMilli();
 		// playSound('s');
 		checkHealth();
+		// Check for gone circles
+		fOContainer.killDeadCircles();
 		try {
 			bucket.rotateBucket(catchMe.getRotateDegrees());
 		} catch (Exception ex) {
@@ -629,8 +674,10 @@ public class MainGameActivity extends SwarmActivity {
 			restartGameThread("bgStarsUpdate", ex);
 		}
 		try {
-			// update circle positions
-			fOContainer.updateCirclePositions(deltaMilli);
+			if (!catchMe.isPaused()) {
+				// update circle positions
+				fOContainer.updateCirclePositions(deltaMilli);
+			}
 		} catch (Exception ex) {
 			restartGameThread("fOCont Update Pos", ex);
 		}
@@ -646,11 +693,28 @@ public class MainGameActivity extends SwarmActivity {
 			restartGameThread("healthBarUpdate", ex);
 		}
 		try {
+			if (!catchMe.isPaused()) {
 			checkCollisions();
+			}
 		} catch (Exception ex) {
 			restartGameThread("checkColl", ex);
 		}
 		drawSurfaceView();
+	}
+
+	private void triggerGameAnimation(int delay) {
+		catchMe.setGameRunning(true);
+		createCircle = new ScheduledThreadPoolExecutor(1);
+		createCircle.schedule(circleThread, delay, TimeUnit.MILLISECONDS);
+		fRFill = new ScheduledThreadPoolExecutor(1);
+		fRFill.scheduleAtFixedRate(fuelRefillThread, delay, 500, TimeUnit.MILLISECONDS);
+
+		if (!FallingObjectContainer.bitMapsSetUp()) {
+			FallingObjectContainer.setUpBitMaps(this);
+		}
+		if (!BackgroundStars.bitMapLoaded()) {
+			bgStars.loadImage(this);
+		}
 	}
 
 	private void drawSurfaceView() {
@@ -686,5 +750,4 @@ public class MainGameActivity extends SwarmActivity {
 		editor.putInt("HighScore9", scores.get(9));
 		editor.commit();
 	}
-
 }

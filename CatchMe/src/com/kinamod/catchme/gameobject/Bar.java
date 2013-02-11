@@ -11,21 +11,27 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
+import com.kinamod.catchme.CatchMe;
 import com.kinamod.catchme.util.CustomisedLogging;
 
 public abstract class Bar {
 	static final CustomisedLogging logger = new CustomisedLogging(false, false);
+	CatchMe catchMe = CatchMe.getInstance();
 	int count;
 	boolean inUse = false;
 	final String label;
 	RectF myShape = new RectF();
+	float decrementer, incrementer;
 
 	public Bar(String label, int count) {
 		this.label = label;
+		decrementer = 1;
 	}
 
 	public void decCount() {
-		count--;
+		if (count >= 0) {
+			count -= decrementer;
+		}
 	}
 
 	public abstract void drawBar(Canvas canvas, Paint mPaint);

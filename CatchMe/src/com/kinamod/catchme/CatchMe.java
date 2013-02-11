@@ -30,7 +30,7 @@ public class CatchMe extends Application {
 	private int bucketSize;
 
 	private int circleDelay;
-	private boolean gameOver = false;
+	private boolean gameOver = false, paused = false;
 	private LinkedList<Integer> highScores = new LinkedList<Integer>();
 	int level = 1;
 	private int multiplier = 1;
@@ -43,7 +43,7 @@ public class CatchMe extends Application {
 
 	private boolean vibrateON = true, musicON = true, highSensitivity = false, soundFX = true,
 			invertTilt = false;
-	private boolean scoreSubmitted = false, firstPlayed = false;
+	private boolean scoreSubmitted = false, firstPlayed = false, gameRunning = false;
 
 	public static CatchMe getInstance() {
 		if (singleton == null) {
@@ -178,9 +178,16 @@ public class CatchMe extends Application {
 		score = 0;
 		levelScore = 0;
 		level = 1;
-		gameOver = false;
+
 		// aNewHighScore = false;
 		multiplier = 1;
+		resetState();
+	}
+
+	private void resetState() {
+		setGameOver(false);
+		setPaused(false);
+		setGameRunning(false);
 	}
 
 	public void setCircleBucketFour(int circleDelay, int bucketSize) {
@@ -259,6 +266,22 @@ public class CatchMe extends Application {
 
 	public void firstPlayed() {
 		this.firstPlayed = true;
+	}
+
+	public boolean isGameRunning() {
+		return gameRunning;
+	}
+
+	public void setGameRunning(boolean gameRunning) {
+		this.gameRunning = gameRunning;
+	}
+
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 
 }

@@ -19,11 +19,13 @@ import com.kinamod.catchme.util.CustomisedLogging;
 public class FallingObjectContainer {
 	static SparseArray<Bitmap> circles = new SparseArray<Bitmap>(5);
 	private static int circleSize = 10;
+	private static boolean bitMapLoaded = false;
 	private static final CustomisedLogging logger = new CustomisedLogging(
 			false, false);
 
 	public static void releaseBitMaps() {
 		circles.clear();
+		bitMapLoaded = false;
 	}
 
 	public static void setUpBitMaps(MainGameActivity mainGameActivity) {
@@ -51,6 +53,7 @@ public class FallingObjectContainer {
 				.decodeResource(mainGameActivity.getResources(),
 						R.drawable.pinkball), circleSize * 2, circleSize * 2,
 				false));
+		bitMapLoaded = true;
 	}
 
 	CatchMe catchMe = CatchMe.getInstance();
@@ -130,5 +133,9 @@ public class FallingObjectContainer {
 		for (FallingObject thisOne : fallingCircles) {
 			thisOne.updatePosition(dTimeShrink);
 		}
+	}
+
+	public static boolean bitMapsSetUp() {
+		return bitMapLoaded;
 	}
 }
