@@ -8,13 +8,12 @@ import android.graphics.RectF;
 import com.kinamod.catchme.util.CustomisedLogging;
 
 public class Explosion {
-	private static final CustomisedLogging logger = new CustomisedLogging(
-			false, false);
+	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
 	private int colour;
 	private float currentDiam = 20;
-	private Bitmap explosionBitmap;
+	private final Bitmap explosionBitmap;
 	private boolean explosionFinished;
-	private RectF rect;
+	private final RectF rect;
 	private boolean started = false;
 	private int transparency;
 
@@ -26,22 +25,19 @@ public class Explosion {
 
 	public Explosion(Bitmap bmpIn, float posX, float posY) {
 		explosionBitmap = Bitmap.createBitmap(bmpIn);
-		rect = new RectF(posX - currentDiam / 2, posY - currentDiam / 2, posX
-				+ currentDiam / 2, posY + currentDiam / 2);
-		logger.localDebugLog(2, "createExplosion", explosionBitmap.toString()
-				+ " : " + bmpIn.toString());
+		rect = new RectF(posX - currentDiam / 2, posY - currentDiam / 2, posX + currentDiam / 2, posY + currentDiam / 2);
+		logger.localDebugLog(2, "createExplosion", explosionBitmap.toString() + " : " + bmpIn.toString());
 	}
 
 	public void drawExplosion(Canvas canvas, Paint mPaint) {
-		logger.localDebugLog(2, "createExplosion", "just before scale: "
-				+ explosionBitmap.toString());
+		logger.localDebugLog(2, "createExplosion", "just before scale: " + explosionBitmap.toString());
 		// explosionBitmap = Bitmap.createScaledBitmap(explosionBitmap, (int)
 		// currentRadius,
 		// (int) currentRadius, false);
 		mPaint.setAlpha((int) (255 / 50 * currentDiam));
 
-		logger.localDebugLog(2, "createExplosion", "just before draw: "
-				+ explosionBitmap.toString() + "\nmPaint: " + mPaint);
+		logger.localDebugLog(2, "createExplosion", "just before draw: " + explosionBitmap.toString() + "\nmPaint: "
+				+ mPaint);
 		// canvas.drawBitmap(explosionBitmap, position.x - currentRadius / 2,
 		// position.y - currentRadius / 2,
 		// mPaint);
@@ -77,7 +73,7 @@ public class Explosion {
 	}
 
 	public void startExplosion() {
-		Thread meExplode = new Thread("meExplodeThread") {
+		final Thread meExplode = new Thread("meExplodeThread") {
 			@Override
 			public void run() {
 				while (currentDiam < 50) {
@@ -91,7 +87,6 @@ public class Explosion {
 
 	public void update(float dTime) {
 		currentDiam += dTime;
-		logger.localDebugLog(1, "updateExplosion", "currentRadius: "
-				+ currentDiam);
+		logger.localDebugLog(1, "updateExplosion", "currentRadius: " + currentDiam);
 	}
 }

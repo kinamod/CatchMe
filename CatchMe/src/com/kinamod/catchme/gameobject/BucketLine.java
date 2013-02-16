@@ -13,8 +13,7 @@ import android.graphics.PointF;
 import com.kinamod.catchme.util.CustomisedLogging;
 
 public class BucketLine {
-	private static CustomisedLogging logger = new CustomisedLogging(false,
-			false);
+	private static CustomisedLogging logger = new CustomisedLogging(false, false);
 	PointF aye, bee;
 	PointF ayeOrig, beeOrig;
 	int color;
@@ -54,33 +53,29 @@ public class BucketLine {
 		logger.localDebugLog(tagSwitch, TAG, "degrees: " + deg + color);
 
 		double ax, ay, bx, by;
-		double theta = Math.toRadians(deg);
+		final double theta = Math.toRadians(deg);
 		// for top left corner
-		ax = ayeOrig.x * (Math.cos(theta)) - ayeOrig.y * (Math.sin(theta));
-		ay = ayeOrig.x * (Math.sin(theta)) + ayeOrig.y * (Math.cos(theta));
+		ax = ayeOrig.x * Math.cos(theta) - ayeOrig.y * Math.sin(theta);
+		ay = ayeOrig.x * Math.sin(theta) + ayeOrig.y * Math.cos(theta);
 		aye.set((float) ax, (float) ay);
 
-		logger.localDebugLog(tagSwitch, TAG, "aye - dx:dy: " + (int) ax + ":"
-				+ (int) ay);
+		logger.localDebugLog(tagSwitch, TAG, "aye - dx:dy: " + (int) ax + ":" + (int) ay);
 		// for Top right
-		bx = beeOrig.x * (Math.cos(theta)) - beeOrig.y * (Math.sin(theta));
-		by = beeOrig.x * (Math.sin(theta)) + beeOrig.y * (Math.cos(theta));
+		bx = beeOrig.x * Math.cos(theta) - beeOrig.y * Math.sin(theta);
+		by = beeOrig.x * Math.sin(theta) + beeOrig.y * Math.cos(theta);
 
 		bee.set((float) bx, (float) by);
-		logger.localDebugLog(tagSwitch, TAG, "bee - dx:dy: " + (int) bx + ":"
-				+ (int) by);
-		logger.localDebugLog(1, TAG, "adx+bdx: " + (ax + bx) + "\nady+bdy: "
-				+ (ay + by));
+		logger.localDebugLog(tagSwitch, TAG, "bee - dx:dy: " + (int) bx + ":" + (int) by);
+		logger.localDebugLog(1, TAG, "adx+bdx: " + (ax + bx) + "\nady+bdy: " + (ay + by));
 	}
 
 	public String toOrigString() {
-		return ("ayeOrig.x: " + ayeOrig.x + " ayeOrig.y: " + ayeOrig.y
-				+ " : beeOrig.x: " + beeOrig.x + " beeOrig.y: " + beeOrig.y);
+		return "ayeOrig.x: " + ayeOrig.x + " ayeOrig.y: " + ayeOrig.y + " : beeOrig.x: " + beeOrig.x + " beeOrig.y: "
+				+ beeOrig.y;
 	}
 
 	@Override
 	public String toString() {
-		return ("aye.x: " + aye.x + " aye.y: " + aye.y + " : bee.x: " + bee.x
-				+ " bee.y: " + bee.y);
+		return "aye.x: " + aye.x + " aye.y: " + aye.y + " : bee.x: " + bee.x + " bee.y: " + bee.y;
 	}
 }

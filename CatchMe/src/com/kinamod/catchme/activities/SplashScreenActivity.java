@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kinamod.catchme.R;
+import com.kinamod.catchme.util.PreferenceHandler;
 import com.swarmconnect.SwarmActivity;
 
 public class SplashScreenActivity extends SwarmActivity {
@@ -22,9 +23,13 @@ public class SplashScreenActivity extends SwarmActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.splash_screen);
-		//com.swarmconnect.Swarm.preload(this, SwarmHandler.SWARM_ID, SwarmHandler.SWARM_KEY);
+		// com.swarmconnect.Swarm.preload(this, SwarmHandler.SWARM_ID,
+		// SwarmHandler.SWARM_KEY);
 
-		Handler handler = new Handler();
+		PreferenceHandler preHand = new PreferenceHandler();
+		preHand.loadPrefsFromFile(this);
+
+		final Handler handler = new Handler();
 
 		// run a thread after 2 seconds to start the home screen
 		handler.postDelayed(new Runnable() {
@@ -38,7 +43,7 @@ public class SplashScreenActivity extends SwarmActivity {
 				finish();
 				// start the home screen
 
-				Intent intent = new Intent(SplashScreenActivity.this, HomeScreenActivity.class);
+				final Intent intent = new Intent(SplashScreenActivity.this, HomeScreenActivity.class);
 				SplashScreenActivity.this.startActivity(intent);
 
 			}

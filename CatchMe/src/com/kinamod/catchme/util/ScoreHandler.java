@@ -42,7 +42,7 @@ public class ScoreHandler {
 				// Give the achievement for successfully landing!
 				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER10);
 
-				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast10),
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast10),
 						Toast.LENGTH_SHORT);
 				toast.show();
 			}
@@ -50,7 +50,7 @@ public class ScoreHandler {
 		if (catchMe.getScore() >= 50) {
 			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER50)) {
 				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER50);
-				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast50),
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast50),
 						Toast.LENGTH_SHORT);
 				toast.show();
 			}
@@ -58,7 +58,7 @@ public class ScoreHandler {
 		if (catchMe.getScore() >= 100) {
 			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER100)) {
 				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER100);
-				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast100),
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast100),
 						Toast.LENGTH_SHORT);
 				toast.show();
 			}
@@ -66,7 +66,7 @@ public class ScoreHandler {
 		if (catchMe.getScore() >= 200) {
 			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER200)) {
 				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER200);
-				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast200),
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast200),
 						Toast.LENGTH_SHORT);
 				toast.show();
 			}
@@ -74,7 +74,7 @@ public class ScoreHandler {
 		if (catchMe.getScore() >= 500) {
 			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER500)) {
 				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER500);
-				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast500),
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast500),
 						Toast.LENGTH_SHORT);
 				toast.show();
 			}
@@ -82,7 +82,7 @@ public class ScoreHandler {
 		if (catchMe.getScore() >= 1000) {
 			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER1000)) {
 				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER1000);
-				Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast1000),
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast1000),
 						Toast.LENGTH_SHORT);
 				toast.show();
 			}
@@ -90,8 +90,8 @@ public class ScoreHandler {
 	}
 
 	public void makeHighScoreDialog(String inString, boolean gameOvr) {
-		LinkedList<Integer> scores = catchMe.getHighScores();
-		StringBuilder sb = new StringBuilder();
+		final LinkedList<Integer> scores = catchMe.getHighScores();
+		final StringBuilder sb = new StringBuilder();
 		boolean i = true;
 		logger.localDebugLog(1, "makeHighScoreDialog", "size(): " + scores.size());
 
@@ -166,15 +166,14 @@ public class ScoreHandler {
 		}
 
 		if (gameOvr) {
-			sb.append("\n\n" + hSA.getResources().getString(R.string.textYourScore) + "  "
-					+ catchMe.getScore());
+			sb.append("\n\n" + hSA.getResources().getString(R.string.textYourScore) + "  " + catchMe.getScore());
 		}
-		AlertDialog.Builder aDBuilder = new AlertDialog.Builder(hSA);
+		final AlertDialog.Builder aDBuilder = new AlertDialog.Builder(hSA);
 
 		if (Swarm.user == null) {
 			aDBuilder.setTitle(inString).setMessage(sb.toString())
-					.setPositiveButton(hSA.getResources().getString(R.string.textSwarmLogin), swarmLogin)
-					.create().show();
+					.setPositiveButton(hSA.getResources().getString(R.string.textSwarmLogin), swarmLogin).create()
+					.show();
 		} else {
 			inString = inString.concat(":  " + Swarm.user.username);
 			if (!Swarm.user.isGuestAccount()) {
@@ -204,6 +203,7 @@ public class ScoreHandler {
 
 	// Listeners ===================================
 	DialogInterface.OnClickListener swarmSubmitScore = new DialogInterface.OnClickListener() {
+		@Override
 		public void onClick(DialogInterface dia, int id) {
 			catchMe.setScoreSubmitted(true);
 			SwarmLeaderboard.submitScore(SwarmHandler.LDBOARD_ONE, catchMe.getScore());
@@ -212,11 +212,13 @@ public class ScoreHandler {
 		}
 	};
 	DialogInterface.OnClickListener swarmLeaderboards = new DialogInterface.OnClickListener() {
+		@Override
 		public void onClick(DialogInterface dia, int id) {
 			Swarm.showLeaderboards();
 		}
 	};
 	DialogInterface.OnClickListener swarmLogin = new DialogInterface.OnClickListener() {
+		@Override
 		public void onClick(DialogInterface dia, int id) {
 			// start to init swarm now...cheater
 			Swarm.logOut();
@@ -226,6 +228,7 @@ public class ScoreHandler {
 		}
 	};
 	DialogInterface.OnClickListener swarmLogout = new DialogInterface.OnClickListener() {
+		@Override
 		public void onClick(DialogInterface dia, int id) {
 			// start to init swarm now...cheater
 			Swarm.logOut();
@@ -236,6 +239,7 @@ public class ScoreHandler {
 		// Load achievements so they are
 		// available when we need them later.
 		SwarmAchievement.getAchievementsMap(new GotAchievementsMapCB() {
+			@Override
 			public void gotMap(Map<Integer, SwarmAchievement> achievementsMap) {
 
 				// Store the map of achievements to be used later.

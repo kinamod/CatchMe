@@ -30,7 +30,7 @@ public class CatchMe extends Application {
 	private static final CustomisedLogging logger = new CustomisedLogging(true, false);
 
 	// private boolean aNewHighScore = false;
-	private int bucketSize;
+	// private int bucketSize;
 
 	private int circleDelay;
 	private boolean gameOver = false, paused = false;
@@ -42,11 +42,12 @@ public class CatchMe extends Application {
 
 	private int score = 0, levelScore = 0;
 
-	private Point screenSize = new Point(), centrePoint;
+	private final Point screenSize = new Point();
+	private Point centrePoint;
 
-	private boolean vibrateON = true, musicON = true, highSensitivity = false, soundFX = true,
-			invertTilt = false;
+	private boolean vibrateON = true, musicON = true, highSensitivity = false, soundFX = true, invertTilt = false;
 	private boolean scoreSubmitted = false, firstPlayed = false, gameStopped = true;
+	public long time2;
 
 	public static CatchMe getInstance() {
 		if (singleton == null) {
@@ -58,10 +59,6 @@ public class CatchMe extends Application {
 	public void decPink(int take) {
 		multiplier = 1;
 		score -= take;
-	}
-
-	public int getBucketSize() {
-		return bucketSize;
 	}
 
 	public Point getCentrePoint() {
@@ -148,7 +145,8 @@ public class CatchMe extends Application {
 	}
 
 	public boolean isMusicON() {
-		return musicON;
+		logger.localDebugLog(1, "LoadPref", "music ON: " + musicON);
+		return this.musicON;
 	}
 
 	// public boolean isNewHighScore() {
@@ -193,10 +191,6 @@ public class CatchMe extends Application {
 		setGameOver(false);
 	}
 
-	public void setCircleBucketFour(int circleDelay, int bucketSize) {
-		this.bucketSize = bucketSize;
-	}
-
 	public void setCircleDelay(int in) {
 		this.circleDelay = in;
 	}
@@ -220,6 +214,7 @@ public class CatchMe extends Application {
 	}
 
 	public void setMusicON(boolean musicON) {
+		logger.localDebugLog(1, "LoadPref", "    setMusic: " + isMusicON());
 		this.musicON = musicON;
 	}
 
@@ -239,8 +234,8 @@ public class CatchMe extends Application {
 	}
 
 	public void setScreenSize(MainGameActivity mainGameActivity) {
-		Display display = mainGameActivity.getWindowManager().getDefaultDisplay();
-		DisplayMetrics outMetrics = new DisplayMetrics();
+		final Display display = mainGameActivity.getWindowManager().getDefaultDisplay();
+		final DisplayMetrics outMetrics = new DisplayMetrics();
 
 		display.getMetrics(outMetrics);
 		screenSize.x = outMetrics.widthPixels;

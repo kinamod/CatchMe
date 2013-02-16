@@ -13,7 +13,7 @@ import com.kinamod.catchme.activities.HomeScreenActivity;
 public class PreferenceHandler {
 	private SharedPreferences prefs;
 	CatchMe catchMe = CatchMe.getInstance();
-
+	private static final CustomisedLogging logger = new CustomisedLogging(true, false);
 	public void loadHighScores(Activity activity) {
 		@SuppressWarnings("unused")
 		final String TAG = "PrefStores";
@@ -22,7 +22,7 @@ public class PreferenceHandler {
 
 		// get from the pref file, send to Game stae linked list
 
-		LinkedList<Integer> scores = new LinkedList<Integer>();
+		final LinkedList<Integer> scores = new LinkedList<Integer>();
 		scores.add(prefs.getInt("HighScore", 0));
 		scores.add(prefs.getInt("HighScore1", 0));
 		scores.add(prefs.getInt("HighScore2", 0));
@@ -36,15 +36,23 @@ public class PreferenceHandler {
 		catchMe.setHighScores(scores);
 	}
 
-	public synchronized void loadPrefsFromFile(HomeScreenActivity activity) {
+	public synchronized void loadPrefsFromFile(Activity activity) {
+		logger.localDebugLog(1, "LoadPref", "LOAD FROM PREFF FILE");
 		@SuppressWarnings("unused")
 		final String TAG = "PrefStores";
 		// getting preferences
 		prefs = activity.getSharedPreferences(CatchMe.PREF_FILE_NAME, Context.MODE_PRIVATE);
-		catchMe.setMusicON(prefs.getBoolean("Music", true));
+		catchMe.setMusicON(prefs.getBoolean("Music", false));
+		catchMe.setSoundFX(prefs.getBoolean("SFX", true));
 		catchMe.setVibrate(prefs.getBoolean("Vibrate", true));
 		catchMe.setInvertTilt(prefs.getBoolean("Invert", false));
 		catchMe.setHighSensitivity(prefs.getBoolean("Sensitivity", true));
+
+		logger.localDebugLog(1, "LoadPref", "    Music: " + catchMe.isMusicON());
+		logger.localDebugLog(1, "LoadPref", "    SFX: " + catchMe.isSoundFX());
+		logger.localDebugLog(1, "LoadPref", "    Vibrate: " + catchMe.isVibrate());
+		logger.localDebugLog(1, "LoadPref", "    Invert: " + catchMe.isInvertTilt());
+		logger.localDebugLog(1, "LoadPref", "    Sensitivity: " + catchMe.isHighSensitivity());
 
 	}
 
@@ -60,5 +68,12 @@ public class PreferenceHandler {
 		editor.putBoolean("Sensitivity", catchMe.isHighSensitivity());
 		editor.putBoolean("Invert", catchMe.isInvertTilt());
 		editor.commit();
+
+		logger.localDebugLog(1, "LoadPref", "PUSH TO PREFF FILE");
+		logger.localDebugLog(1, "LoadPref", "    Music: " + catchMe.isMusicON());
+		logger.localDebugLog(1, "LoadPref", "    SFX: " + catchMe.isSoundFX());
+		logger.localDebugLog(1, "LoadPref", "    Vibrate: " + catchMe.isVibrate());
+		logger.localDebugLog(1, "LoadPref", "    Invert: " + catchMe.isInvertTilt());
+		logger.localDebugLog(1, "LoadPref", "    Sensitivity: " + catchMe.isHighSensitivity());
 	}
 }

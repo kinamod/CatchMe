@@ -47,23 +47,27 @@ public class SwarmHandler {
 
 		// This method is called when the login process has started
 		// (when a login dialog is displayed to the user).
+		@Override
 		public void loginStarted() {
 		}
 
 		// This method is called if the user cancels the login process.
+		@Override
 		public void loginCanceled() {
 		}
 
 		// This method is called when the user has successfully logged in.
+		@Override
 		public void userLoggedIn(SwarmActiveUser user) {
 			setLoggedIn(true);
-			Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textLoggedInAs)
+			final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textLoggedInAs)
 					+ Swarm.user.username, Toast.LENGTH_SHORT);
 			toast.show();
 			ScoreHandler.loadAchievements();
 		}
 
 		// This method is called when the user logs out.
+		@Override
 		public void userLoggedOut() {
 			setLoggedIn(false);
 		}

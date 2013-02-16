@@ -16,13 +16,12 @@ import com.kinamod.catchme.activities.MainGameActivity;
 
 public class SoundPoolCatchMe {
 	boolean loaded = false;
-	private int[] soundID = new int[9];
-	private SoundPool soundPool;
+	private final int[] soundID = new int[9];
+	private final SoundPool soundPool;
 	float volume;
 
 	public SoundPoolCatchMe(MainGameActivity activity) {
-		AudioManager audioManager = (AudioManager) activity
-				.getSystemService(Context.AUDIO_SERVICE);
+		final AudioManager audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
 		volume = setUpVolume(audioManager);
 
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -47,10 +46,8 @@ public class SoundPoolCatchMe {
 	}
 
 	private float setUpVolume(AudioManager audioManager) {
-		float actualVolume = audioManager
-				.getStreamVolume(AudioManager.STREAM_MUSIC);
-		float maxVolume = audioManager
-				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		final float actualVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		final float maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		return actualVolume / maxVolume;
 	}
 }

@@ -19,16 +19,16 @@ public class CustomisedLogging {
 
 	public void localDebugLog(int type, String TAG, String message) {
 		switch (type) {
-		case 1:
-			if (logOne) {
-				Log.i(TAG, message);
-			}
-			break;
-		case 2:
-			if (logTwo) {
-				Log.i(TAG, message);
-			}
-			break;
+			case 1:
+				if (logOne) {
+					Log.i(TAG, message);
+				}
+				break;
+			case 2:
+				if (logTwo) {
+					Log.i(TAG, message);
+				}
+				break;
 		}
 
 	}

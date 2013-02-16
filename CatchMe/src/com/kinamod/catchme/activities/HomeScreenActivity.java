@@ -9,6 +9,7 @@ package com.kinamod.catchme.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -17,12 +18,12 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ViewSwitcher;
@@ -41,12 +42,13 @@ import com.swarmconnect.SwarmActivity;
 public class HomeScreenActivity extends SwarmActivity {
 	private AdView adView;
 	private static HomeScreenActivity instance;
-	private PreferenceHandler prefHand = new PreferenceHandler();
+	private final PreferenceHandler prefHand = new PreferenceHandler();
 	CatchMe catchMe = CatchMe.getInstance();
 	CustomisedLogging logger = new CustomisedLogging(true, false);
-	boolean menuShowing = false;
+	boolean menuShowing = false, musicPlaying = false;
 	private static MediaPlayer player;
-	private ImageView[] whiteButtons = new ImageView[9];
+	private final ImageView[] whiteButtons = new ImageView[9];
+	// private Intent startGameIntent;
 
 	private ScoreHandler scoreHand;
 
@@ -54,8 +56,8 @@ public class HomeScreenActivity extends SwarmActivity {
 
 	public void flipToHome(View view) {
 		menuShowing = false;
-		prefHand.savePrefstoFile(this);
-		startMusic();
+		prefHand.savePrefstoFile(instance);
+		startMusic(instance);
 		vs.setAnimation(AnimationUtils.makeInAnimation(getApplicationContext(), true));
 		vs.showPrevious();
 	}
@@ -70,28 +72,38 @@ public class HomeScreenActivity extends SwarmActivity {
 
 	// SWARM listeners ============== END
 
+	public HomeScreenActivity() {
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		instance = getInstance();
-		scoreHand = new ScoreHandler(this);
+		instance = this;
+		scoreHand = new ScoreHandler(instance);
 		// Make available outside google Play
 		Swarm.enableAlternativeMarketCompatability();
+		// Remove title bar
+		instance.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// Remove notification bar
+		instance.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.starting_screen);
-		adView = new AdView(this, AdSize.BANNER, CatchMe.AD_UNIT_ID);
+		adView = new AdView(instance, AdSize.BANNER, CatchMe.AD_UNIT_ID);
 
 		vs = (ViewSwitcher) findViewById(R.id.flipView);
 
-		LinearLayout adlayout = (LinearLayout) findViewById(R.id.adLinearLayout);
+		final LinearLayout adlayout = (LinearLayout) findViewById(R.id.adLinearLayout);
 
 		// Add the adView to it
 		adlayout.addView(adView);
 
-		prefHand.loadPrefsFromFile(this);
+		// prefHand.loadPrefsFromFile(instance);
 		initialiseWhiteButtons();
-		updateToggleButtons();
-		prefHand.loadHighScores(this);
+		if (!catchMe.isFirstPlayed()) {
+			updateToggleButtons();
+		}
+		prefHand.loadHighScores(instance);
 	}
 
 	// Button Actions = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -113,26 +125,50 @@ public class HomeScreenActivity extends SwarmActivity {
 	public void howToPlay(View view) {
 		animateButtQuick(view, 4);
 
-		AlertDialog.Builder aDBuilder = new AlertDialog.Builder(this);
+		final AlertDialog.Builder aDBuilder = new AlertDialog.Builder(instance);
 		aDBuilder.setTitle("How to Play").setMessage(R.string.texthowToPlay).create().show();
 	}
 
-	public void launchGame(View view) {
+	public void launchGame(final View view) {
+		catchMe.time2 = System.currentTimeMillis();
 		catchMe.firstPlayed();
-		Intent myIntent = new Intent(HomeScreenActivity.this, MainGameActivity.class);
-		animateStartGame(view, myIntent);
+
+		long time = System.currentTimeMillis();
+		final Intent startGameIntent = new Intent(HomeScreenActivity.instance, MainGameActivity.class);
+		logger.localDebugLog(1, "TIMER", "Create Intent: " + (System.currentTimeMillis() - time));
+
+		// new Thread("animateStartGameButtons") {
+		// @Override
+		// public void run() {
+		// final Intent myIntent = new Intent(HomeScreenActivity.instance,
+		// MainGameActivity.class);
+		// HomeScreenActivity.instance.startActivity(myIntent);
+		// }
+		// }.start();
+		time = System.currentTimeMillis();
+		//animateStartGame(view, startGameIntent);
+		animateButtQuick(view, 1);
+		logger.localDebugLog(1, "TIMER", "Animate buttons: " + (System.currentTimeMillis() - time));
+
+		time = System.currentTimeMillis();
+		HomeScreenActivity.instance.startActivity(startGameIntent);
+		logger.localDebugLog(1, "TIMER",
+				"Start Activity: " + (System.currentTimeMillis() - time) + "\n\n: " + System.currentTimeMillis());
+
 	}
 
 	// Toggle buttons = = = = =
 	public void toggleSound(View v) {
 		animateButtQuick(v, 5);
 
-		ImageView img = (ImageView) findViewById(R.id.buttToggleSound);
+		final ImageView img = (ImageView) findViewById(R.id.buttToggleSound);
 		catchMe.setSoundFX(!catchMe.isSoundFX());
 
 		if (catchMe.isSoundFX()) {
+			img.setTag(R.drawable.button_sndon);
 			img.setImageResource(R.drawable.button_sndon);
 		} else {
+			img.setTag(R.drawable.button_sndoff);
 			img.setImageResource(R.drawable.button_sndoff);
 		}
 	}
@@ -140,12 +176,14 @@ public class HomeScreenActivity extends SwarmActivity {
 	public void toggleSens(View v) {
 		animateButtQuick(v, 6);
 
-		ImageView img = (ImageView) findViewById(R.id.buttToggleSens);
+		final ImageView img = (ImageView) findViewById(R.id.buttToggleSens);
 		catchMe.setHighSensitivity(!catchMe.isHighSensitivity());
 
 		if (catchMe.isHighSensitivity()) {
+			img.setTag(R.drawable.button_senshigh);
 			img.setImageResource(R.drawable.button_senshigh);
 		} else {
+			img.setTag(R.drawable.button_senslow);
 			img.setImageResource(R.drawable.button_senslow);
 		}
 	}
@@ -153,12 +191,14 @@ public class HomeScreenActivity extends SwarmActivity {
 	public void toggleInvert(View v) {
 		animateButtQuick(v, 7);
 
-		ImageView img = (ImageView) findViewById(R.id.buttToggleInvert);
+		final ImageView img = (ImageView) findViewById(R.id.buttToggleInvert);
 		catchMe.setInvertTilt(!catchMe.isInvertTilt());
 
 		if (catchMe.isInvertTilt()) {
+			img.setTag(R.drawable.button_inverton);
 			img.setImageResource(R.drawable.button_inverton);
 		} else {
+			img.setTag(R.drawable.button_invertoff);
 			img.setImageResource(R.drawable.button_invertoff);
 		}
 	}
@@ -166,12 +206,14 @@ public class HomeScreenActivity extends SwarmActivity {
 	public void toggleMusic(View v) {
 		animateButtQuick(v, 8);
 
-		ImageView img = (ImageView) findViewById(R.id.buttToggleMusic);
+		final ImageView img = (ImageView) findViewById(R.id.buttToggleMusic);
 		catchMe.setMusicON(!catchMe.isMusicON());
 
 		if (catchMe.isMusicON()) {
 			img.setImageResource(R.drawable.button_musicon);
+			img.setTag(R.drawable.button_musicon);
 		} else {
+			img.setTag(R.drawable.button_musicoff);
 			img.setImageResource(R.drawable.button_musicoff);
 		}
 	}
@@ -179,20 +221,22 @@ public class HomeScreenActivity extends SwarmActivity {
 	public void toggleVibrate(View v) {
 		animateButtQuick(v, 9);
 
-		ImageView img = (ImageView) findViewById(R.id.buttToggleVibrate);
+		final ImageView img = (ImageView) findViewById(R.id.buttToggleVibrate);
 		catchMe.setVibrate(!catchMe.isVibrate());
 
 		if (catchMe.isVibrate()) {
 			img.setImageResource(R.drawable.button_vibrateon);
+			img.setTag(R.drawable.button_vibrateon);
 		} else {
 			img.setImageResource(R.drawable.button_vibrateoff);
+			img.setTag(R.drawable.button_vibrateoff);
 		}
 	}
 
 	// Button Animators = = = =
 	private void animateButtQuick(View v, final int which) {
 
-		AlphaAnimation alphaUp = new AlphaAnimation(0f, 1.0f);
+		final AlphaAnimation alphaUp = new AlphaAnimation(0f, 1.0f);
 		alphaUp.setDuration(500);
 		alphaUp.setFillAfter(true);
 		alphaUp.setAnimationListener(new AnimationListener() {
@@ -216,48 +260,57 @@ public class HomeScreenActivity extends SwarmActivity {
 		}
 	}
 
-	private void animateStartGame(View v, final Intent myIntent) {
-
-		AnimationSet anSet = new AnimationSet(true);
-		AlphaAnimation alphaDown = new AlphaAnimation(1.0f, 0f);
-		alphaDown.setDuration(500);
-
-		TranslateAnimation translate = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.ABSOLUTE, -300,
-				Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
-		translate.setDuration(500);
-		alphaDown.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-				HomeScreenActivity.this.startActivity(myIntent);
-				for (int i = 0; i < whiteButtons.length; i++) {
-					setButtonOpacity(1, i);
-				}
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				for (int i = 0; i < whiteButtons.length; i++) {
-					setButtonOpacity(0, i);
-				}
-				TranslateAnimation goRight = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.ABSOLUTE,
-						400, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
-				goRight.setDuration(500);
-				findViewById(R.id.buttonHighScores).startAnimation(goRight);
-				findViewById(R.id.buttonHowToPlay).startAnimation(goRight);
-				findViewById(R.id.buttonOptions).startAnimation(goRight);
-			}
-		});
-		anSet.addAnimation(alphaDown);
-		anSet.addAnimation(translate);
-		if (v != null) {
-			v.startAnimation(anSet);
-		}
-	}
+	// private void animateStartGame(View v, final Intent myIntent) {
+	//
+	// final AnimationSet anSet = new AnimationSet(true);
+	// final AlphaAnimation alphaDown = new AlphaAnimation(1.0f, 0f);
+	// alphaDown.setDuration(500);
+	//
+	// final TranslateAnimation translate = new
+	// TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.ABSOLUTE,
+	// -300, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
+	// translate.setDuration(500);
+	// alphaDown.setAnimationListener(new AnimationListener() {
+	//
+	// @Override
+	// public void onAnimationStart(Animation animation) {
+	// // for (int i = 0; i < whiteButtons.length; i++) {
+	// // setButtonOpacity(0, i);
+	// // }
+	// final TranslateAnimation goRight[] = new TranslateAnimation[3];
+	// for (int i = 0; i < 3; i++) {
+	// goRight[i] = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0,
+	// Animation.ABSOLUTE, 400,
+	// Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
+	// goRight[i].setDuration(500);
+	// goRight[i].setStartOffset(i * 100 + 100);
+	// }
+	//
+	// findViewById(R.id.buttonHighScores).startAnimation(goRight[0]);
+	// findViewById(R.id.buttonHighScores).invalidate();
+	// findViewById(R.id.buttonOptions).startAnimation(goRight[1]);
+	// findViewById(R.id.buttonHowToPlay).startAnimation(goRight[2]);
+	// }
+	//
+	// @Override
+	// public void onAnimationRepeat(Animation animation) {
+	// }
+	//
+	// @Override
+	// public void onAnimationEnd(Animation animation) {
+	//
+	// // HomeScreenActivity.instance.startActivity(myIntent);
+	// }
+	// });
+	// anSet.addAnimation(alphaDown);
+	// anSet.addAnimation(translate);
+	// if (v != null) {
+	// v.startAnimation(anSet);
+	// v.invalidate();
+	// }
+	//
+	// // HomeScreenActivity.instance.startActivity(myIntent);
+	// }
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
@@ -323,23 +376,26 @@ public class HomeScreenActivity extends SwarmActivity {
 		if (!(player == null)) {
 			try {
 				player.stop();
-			} catch (IllegalStateException e) {
+			} catch (final IllegalStateException e) {
 				logger.localDebugLog(1, "MediaPlayer", "IllegalStateException:\n" + e.getCause());
 			}
 			player.release();
+			musicPlaying = false;
+			logger.localDebugLog(1, "Released", "playerReleased");
 		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		startMusic();
+		player = null;
+		startMusic(instance);
 		// Initiate a generic request to load it with an ad
 		setUpAd();
 	}
 
 	private void setUpAd() {
-		AdRequest request = new AdRequest();
+		final AdRequest request = new AdRequest();
 		request.addTestDevice(AdRequest.TEST_EMULATOR);
 		request.setGender(AdRequest.Gender.MALE);
 		request.addTestDevice("D1AA72C9A2A1C5A11117338EA973D814");// my one s
@@ -353,21 +409,33 @@ public class HomeScreenActivity extends SwarmActivity {
 		scoreHand.checkAcheivements();
 	}
 
-	private void startMusic() {
-		if (player == null) {
-			player = MediaPlayer.create(this, R.raw.tinynoisesintro);
-		} else {
-			player.release();
-			player = MediaPlayer.create(this, R.raw.tinynoisesintro);
+	MediaPlayer.OnErrorListener mPlayerListener = new MediaPlayer.OnErrorListener() {
+
+		public boolean onError(MediaPlayer mp, int what, int extra) {
+			player.reset();
+			logger.localDebugLog(2, "Listeners", "Media Player onError callback!");
+			return true;
 		}
-		Thread t = new Thread("musicThread") {
+	};
+
+	private void startMusic(final Context context) {
+		logger.localDebugLog(1, "LoadPref", "    Start Music: " + catchMe.isMusicON());
+		if (player == null) {
+			player = MediaPlayer.create(instance, R.raw.tinynoisesintro);
+		}
+		final Thread t = new Thread("musicThread") {
 			@Override
 			public void run() {
-				player.setLooping(true);
 				if (catchMe.isMusicON()) {
-					player.start();
+					if (!musicPlaying) {
+						player = MediaPlayer.create(context, R.raw.tinynoisesintro);
+						player.setLooping(true);
+						player.start();
+						musicPlaying = true;
+					}
 				} else {
-					player.pause();
+					player.release();
+					musicPlaying = false;
 				}
 			}
 		};
@@ -405,9 +473,6 @@ public class HomeScreenActivity extends SwarmActivity {
 	}
 
 	public static HomeScreenActivity getInstance() {
-		if (instance == null) {
-			instance = new HomeScreenActivity();
-		}
 		return instance;
 	}
 }

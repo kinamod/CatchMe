@@ -14,7 +14,9 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.util.DisplayMetrics;
 import android.util.SparseArray;
+import android.view.Display;
 
 import com.kinamod.catchme.CatchMe;
 import com.kinamod.catchme.R;
@@ -26,44 +28,7 @@ public class Bucket {
 	static SparseArray<Bitmap> bucketBmps = new SparseArray<Bitmap>(6);
 	static final CustomisedLogging logger = new CustomisedLogging(false, false);
 	static SparseArray<Bitmap> whiteBucketBmps = new SparseArray<Bitmap>(5);
-
-	public static void loadBucketBitmap(MainGameActivity mainGA) {
-		bucketBmps.put(1, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.bucketnoglow1), 110, 110, false));
-		bucketBmps.put(2, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.bucketnoglow2), 110, 110, false));
-		bucketBmps.put(3, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.bucketnoglow3), 110, 110, false));
-		bucketBmps.put(4, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.bucketnoglow4), 110, 110, false));
-		bucketBmps.put(5, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.bucketnoglow5), 110, 110, false));
-		bucketBmps.put(6, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.bucketnoglow6), 110, 110, false));
-
-		whiteBucketBmps.put(1, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.whitebucket1), 110, 110, false));
-		whiteBucketBmps.put(2, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.whitebucket2), 110, 110, false));
-		whiteBucketBmps.put(3, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.whitebucket3), 110, 110, false));
-		whiteBucketBmps.put(4, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.whitebucket4), 110, 110, false));
-		whiteBucketBmps.put(5, Bitmap.createScaledBitmap(
-				BitmapFactory.decodeResource(mainGA.getResources(),
-						R.drawable.whitebucket5), 110, 110, false));
-	}
-
+	private static boolean bitMapsLoaded;
 	private int boxAnimate = 0, boxGraphic = 1;
 	Bitmap bucketBitmap;
 	BucketLine[] bucketLines;
@@ -79,10 +44,16 @@ public class Bucket {
 	private boolean whiteBucket;
 
 	public Bucket(MainGameActivity activity) {
-		PointF[] corners = new PointF[4];
+		final PointF[] corners = new PointF[4];
 
-		loadBucketBitmap(activity);
-		halfBucketSize = 50; // xcbucketBitmap.getWidth() / 2; // size rather
+		if (!bitMapsLoaded()) {
+			loadBucketBitmap(activity);
+		}
+
+		halfBucketSize = (int) (catchMe.getScreenSize().x * .09257f); // xcbucketBitmap.getWidth()
+																	// / 2; //
+																	// size
+																	// rather
 		// than
 		// height/width can be
 		// used
@@ -97,33 +68,32 @@ public class Bucket {
 	}
 
 	private float[] cornerInflate(PointF[] cornersIn) {
-		float[] floats = new float[cornersIn.length * 4];
+		final float[] floats = new float[cornersIn.length * 4];
 		floats[0] = cornersIn[0].x;
 		floats[1] = cornersIn[0].y;
 		int corner = 1;
-		int limit = 4 * (cornersIn.length - 1);
+		final int limit = 4 * (cornersIn.length - 1);
 		for (int floatIndex = 2; floatIndex < limit; floatIndex += 4) {
-			floats[floatIndex] = (cornersIn[corner].x);
-			floats[floatIndex + 1] = (cornersIn[corner].y);
-			floats[floatIndex + 2] = (cornersIn[corner].x);
-			floats[floatIndex + 3] = (cornersIn[corner].y);
+			floats[floatIndex] = cornersIn[corner].x;
+			floats[floatIndex + 1] = cornersIn[corner].y;
+			floats[floatIndex + 2] = cornersIn[corner].x;
+			floats[floatIndex + 3] = cornersIn[corner].y;
 			corner++;
 		}
-		floats[floats.length - 2] = (cornersIn[0].x);
-		floats[floats.length - 1] = (cornersIn[0].y);
+		floats[floats.length - 2] = cornersIn[0].x;
+		floats[floats.length - 1] = cornersIn[0].y;
 		return floats;
 	}
 
 	private BucketLine[] cornersToBucketLines(PointF[] cornersIn) {
-		float[] floats = cornerInflate(cornersIn);
+		final float[] floats = cornerInflate(cornersIn);
 
-		BucketLine[] bL = new BucketLine[4];
+		final BucketLine[] bL = new BucketLine[4];
 		int multiplier = 0;
 		for (int i = 0; i < bL.length; i++) {
 			multiplier = 4 * i;
-			bL[i] = new BucketLine(col[i], new PointF(floats[multiplier],
-					floats[1 + multiplier]), new PointF(floats[2 + multiplier],
-					floats[3 + multiplier]));
+			bL[i] = new BucketLine(col[i], new PointF(floats[multiplier], floats[1 + multiplier]), new PointF(
+					floats[2 + multiplier], floats[3 + multiplier]));
 		}
 		return bL;
 	}
@@ -152,18 +122,15 @@ public class Bucket {
 			}
 			wBoxAnimate++;
 			logger.localDebugLog(1, TAG, "whiteboxGraphicNo: " + boxGraphic);
-			canvas.drawBitmap(whiteBucketBmps.get(wBoxGraphic), bucketMatrix,
-					null);
+			canvas.drawBitmap(whiteBucketBmps.get(wBoxGraphic), bucketMatrix, null);
 		}
 	}
 
 	public void drawBucket(Canvas canvas, Point screenSize) {
 		final String TAG = "drawBucket()";
 
-		bucketMatrix.setTranslate((screenSize.x / 2) - 55,
-				(screenSize.y / 2) - 55);
-		bucketMatrix
-				.postRotate(degrees, (screenSize.x / 2), (screenSize.y / 2));
+		bucketMatrix.setTranslate(screenSize.x / 2 - halfBucketSize, screenSize.y / 2 - halfBucketSize);
+		bucketMatrix.postRotate(degrees, screenSize.x / 2, screenSize.y / 2);
 
 		logger.localDebugLog(2, TAG, "matrix: " + bucketMatrix.toShortString());
 
@@ -192,7 +159,7 @@ public class Bucket {
 		if (catchMe.isHighSensitivity()) {
 			degrees = degrees * 2;
 		}
-		int offSet = 0; // 360 / bucketLines.length;
+		final int offSet = 0; // 360 / bucketLines.length;
 		this.degrees = degrees;
 		for (int i = 0; i < bucketLines.length; i++) {
 			bucketLines[i].rotateLine(radius, degrees + i * offSet);
@@ -207,8 +174,8 @@ public class Bucket {
 	@Override
 	public String toString() {
 		final String TAG = "toStringLines";
-		StringBuilder sb = new StringBuilder();
-		for (BucketLine bLines : bucketLines) {
+		final StringBuilder sb = new StringBuilder();
+		for (final BucketLine bLines : bucketLines) {
 			sb.append("line: " + bLines.toString() + "\n");
 		}
 		logger.localDebugLog(2, TAG, "go\n" + sb.toString());
@@ -219,4 +186,80 @@ public class Bucket {
 		// Makes the bucket into superMode
 		whiteBucket = true;
 	}
+
+	public static void releaseBitMaps() {
+		// for (int i = 0; i < bucketBmps.size(); i++) {
+		// bucketBmps.get(i).recycle();
+		// }
+		bucketBmps.clear();
+		// for (int i = 0; i < whiteBucketBmps.size(); i++) {
+		// whiteBucketBmps.get(i).recycle();
+		// }
+		whiteBucketBmps.clear();
+		bitMapsLoaded = false;
+	}
+
+	public static boolean bitMapsLoaded() {
+		return bitMapsLoaded;
+	}
+
+	public static void loadBucketBitmap(final MainGameActivity mainGA) {
+		new Thread("loadBucketBmp") {
+
+			public void run() {
+
+				BitmapFactory.Options bmfOptions = new BitmapFactory.Options();
+
+				final Display display = mainGA.getWindowManager().getDefaultDisplay();
+				final DisplayMetrics outMetrics = new DisplayMetrics();
+
+				display.getMetrics(outMetrics);
+				int bucketSize = (int) (outMetrics.widthPixels * .09257f * 2);
+
+				bmfOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+				bucketBmps
+						.put(1, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.bucketnoglow1, bmfOptions),
+						bucketSize, bucketSize, false));
+				bucketBmps
+						.put(2, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.bucketnoglow2, bmfOptions),
+						bucketSize, bucketSize, false));
+				bucketBmps
+						.put(3, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.bucketnoglow3, bmfOptions),
+						bucketSize, bucketSize, false));
+				bucketBmps
+						.put(4, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.bucketnoglow4, bmfOptions),
+						bucketSize, bucketSize, false));
+				bucketBmps
+						.put(5, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.bucketnoglow5, bmfOptions),
+						bucketSize, bucketSize, false));
+				bucketBmps
+						.put(6, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.bucketnoglow6, bmfOptions),
+						bucketSize, bucketSize, false));
+
+				whiteBucketBmps.put(1, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.whitebucket1, bmfOptions),
+						bucketSize, bucketSize, false));
+				whiteBucketBmps.put(2, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.whitebucket2, bmfOptions),
+						bucketSize, bucketSize, false));
+				whiteBucketBmps.put(3, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.whitebucket3, bmfOptions),
+						bucketSize, bucketSize, false));
+				whiteBucketBmps.put(4, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.whitebucket4, bmfOptions),
+						bucketSize, bucketSize, false));
+				whiteBucketBmps.put(5, Bitmap.createScaledBitmap(
+						BitmapFactory.decodeResource(mainGA.getResources(), R.drawable.whitebucket5, bmfOptions),
+						bucketSize, bucketSize, false));
+				bitMapsLoaded = true;
+			}
+		}.start();
+	}
+
 }

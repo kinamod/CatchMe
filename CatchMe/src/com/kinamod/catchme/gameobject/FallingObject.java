@@ -17,7 +17,7 @@ import android.graphics.PointF;
 import com.kinamod.catchme.util.CustomisedLogging;
 
 public class FallingObject {
-	private int colour;
+	private final int colour;
 	private boolean dying = false;
 	private boolean killMe = false;
 	CustomisedLogging logger = new CustomisedLogging(false, false);
@@ -26,19 +26,17 @@ public class FallingObject {
 	PointF speed = new PointF();
 
 	@SuppressLint("UseSparseArrays")
-	public FallingObject(int timeToCentre, Point startPosition, Point sizeIn,
-			Bitmap bmpIN, int colourIN) {
+	public FallingObject(int timeToCentre, Point startPosition, Point sizeIn, Bitmap bmpIN, int colourIN) {
 		final String TAG = "newFallingObject";
 		float fromX, fromY;
 		colour = colourIN;
-		Point centerPoint = new Point(sizeIn.x / 2, sizeIn.y / 2);
+		final Point centerPoint = new Point(sizeIn.x / 2, sizeIn.y / 2);
 		fromX = centerPoint.x - startPosition.x;
 		fromY = centerPoint.y - startPosition.y;
 
 		speed.set(fromX / timeToCentre, fromY / timeToCentre);
 		logger.localDebugLog(1, TAG, "Speed: " + speed.x + ":" + speed.y);
-		logger.localDebugLog(1, TAG, "Start: " + startPosition.x + ":"
-				+ startPosition.y);
+		logger.localDebugLog(1, TAG, "Start: " + startPosition.x + ":" + startPosition.y);
 		position.set(startPosition.x, startPosition.y);
 		myBitmap = bmpIN;
 	}
@@ -46,16 +44,13 @@ public class FallingObject {
 	public void drawCircle(Canvas canvas, Paint mPaint, int circleSize) {
 		final String TAG = "drawCircle";
 		mPaint.setColor(colour);
-		float x = position.x - circleSize, y = position.y - circleSize;
-		logger.localDebugLog(2, TAG,
-				"Circle Being Drawn: " + myBitmap.toString() + " : x: " + x
-						+ ", y: " + y);
+		final float x = position.x - circleSize, y = position.y - circleSize;
+		logger.localDebugLog(2, TAG, "Circle Being Drawn: " + myBitmap.toString() + " : x: " + x + ", y: " + y);
 		canvas.drawBitmap(myBitmap, x, y, mPaint);
 	}
 
 	public float fromCentre(Point centerPoint) {
-		float fromCentre = (float) Math.hypot(position.x - centerPoint.x,
-				position.y - centerPoint.y);
+		final float fromCentre = (float) Math.hypot(position.x - centerPoint.x, position.y - centerPoint.y);
 		return fromCentre;
 	}
 
@@ -87,10 +82,9 @@ public class FallingObject {
 		this.dying = dying;
 	}
 
-	public boolean shouldICheck(int halfBucket, int circleSize,
-			Point centerPoint) {
+	public boolean shouldICheck(int halfBucket, int circleSize, Point centerPoint) {
 		if (!dying) {
-			if (fromCentre(centerPoint) < (Math.hypot(halfBucket, halfBucket) + circleSize)) {
+			if (fromCentre(centerPoint) < Math.hypot(halfBucket, halfBucket) + circleSize) {
 				return true;
 			}
 		}
@@ -107,13 +101,12 @@ public class FallingObject {
 	public void updatePosition(float dTime) {
 		final String TAG = "FallingObject.UpdatePosition";
 
-		logger.localDebugLog(1, TAG, "PositionBefore:\n    " + position.x
-				+ " : " + position.y + " - speed: " + speed.x + " : " + speed.y);
+		logger.localDebugLog(1, TAG, "PositionBefore:\n    " + position.x + " : " + position.y + " - speed: " + speed.x
+				+ " : " + speed.y);
 
 		position.set(position.x + speed.x * dTime, position.y + speed.y * dTime);
 
-		logger.localDebugLog(1, TAG, "PositionAfter: " + position.x + " : "
-				+ position.y + " - dTime: " + dTime + "\n");
+		logger.localDebugLog(1, TAG, "PositionAfter: " + position.x + " : " + position.y + " - dTime: " + dTime + "\n");
 
 		if (dying) {
 			shrinkAndKill();

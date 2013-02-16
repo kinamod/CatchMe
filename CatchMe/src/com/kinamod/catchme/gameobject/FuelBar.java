@@ -17,7 +17,7 @@ public class FuelBar extends Bar {
 		super(label, count);
 		this.count = count;
 		decrementer = .5f;
-		incrementer = (catchMe.getScreenSize().x - 150) / count;
+		incrementer = (catchMe.getScreenSize().x - 160) / count;
 		myShape.set(114, 60, 150 + incrementer * count, 85);
 	}
 
@@ -39,8 +39,8 @@ public class FuelBar extends Bar {
 
 	@Override
 	public void incCount() {
-		if (count < catchMe.getScreenSize().x - 150) {
-		count += 2;
+		if (count < catchMe.getScreenSize().x - 160) {
+			count += 2;
 		}
 	}
 

@@ -28,10 +28,9 @@ public class MathsHelper {
 		return (float) Math.hypot(in.x, in.y);
 	}
 
-	public static <T extends Number> float meanCollection(
-			Collection<T> collection) {
+	public static <T extends Number> float meanCollection(Collection<T> collection) {
 		float sum = 0;
-		for (T i : collection) {
+		for (final T i : collection) {
 			sum += i.floatValue();
 		}
 		return sum / collection.size();
@@ -47,9 +46,8 @@ public class MathsHelper {
 	 * @return shortest distance to that line
 	 */
 	public static float perpDistance(PointF A, PointF B, PointF P) {
-		double normalLength = Math.hypot(B.x - A.x, B.y - A.y);
-		return (float) (Math.abs((P.x - A.x) * (B.y - A.y) - (P.y - A.y)
-				* (B.x - A.x)) / normalLength);
+		final double normalLength = Math.hypot(B.x - A.x, B.y - A.y);
+		return (float) (Math.abs((P.x - A.x) * (B.y - A.y) - (P.y - A.y) * (B.x - A.x)) / normalLength);
 	}
 
 	public static Point subtractPoint(Point a, Point b) {
@@ -57,8 +55,7 @@ public class MathsHelper {
 	}
 
 	public static PointF subtractPointF(PointF a, PointF b) {
-		logger.localDebugLog(1, "MathsHelper.subtractPointF", a.x + " - " + b.x
-				+ " : " + a.y + " - " + b.y);
+		logger.localDebugLog(1, "MathsHelper.subtractPointF", a.x + " - " + b.x + " : " + a.y + " - " + b.y);
 		return new PointF(a.x - b.x, a.y - b.y);
 	}
 

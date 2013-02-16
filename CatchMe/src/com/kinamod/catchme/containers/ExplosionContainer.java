@@ -11,21 +11,20 @@ import com.kinamod.catchme.gameobject.Explosion;
 import com.kinamod.catchme.util.CustomisedLogging;
 
 public class ExplosionContainer {
-	private static final CustomisedLogging logger = new CustomisedLogging(
-			false, false);
-	private CopyOnWriteArrayList<Explosion> explosions = new CopyOnWriteArrayList<Explosion>();
+	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
+	private final CopyOnWriteArrayList<Explosion> explosions = new CopyOnWriteArrayList<Explosion>();
 
 	public void addExplosion(Bitmap myBitmap, PointF pos) {
 		explosions.add(new Explosion(myBitmap, pos.x, pos.y));
 	}
 
-	public void addExplosion(Explosion expIn) {
-		explosions.add(expIn);
-	}
+	// public void addExplosion(Explosion expIn) {
+	// explosions.add(expIn);
+	// }
 
 	public void drawExplosions(Canvas canvas, Paint mPaint) {
 		startExplosions(canvas, mPaint);
-		for (Explosion thisOne : explosions) {
+		for (final Explosion thisOne : explosions) {
 			thisOne.drawExplosion(canvas, mPaint);
 		}
 	}

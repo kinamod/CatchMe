@@ -20,76 +20,79 @@ public class FallingObjectContainer {
 	static SparseArray<Bitmap> circles = new SparseArray<Bitmap>(5);
 	private static int circleSize = 10;
 	private static boolean bitMapLoaded = false;
-	private static final CustomisedLogging logger = new CustomisedLogging(
-			false, false);
+	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
 
 	public static void releaseBitMaps() {
+		// for (int i = 0; i < circles.size(); i++) { null here for some reason
+		// circles.get(i).recycle();
+		// }
 		circles.clear();
 		bitMapLoaded = false;
 	}
 
-	public static void setUpBitMaps(MainGameActivity mainGameActivity) {
-		circles.put(Color.RED, Bitmap.createScaledBitmap(BitmapFactory
-				.decodeResource(mainGameActivity.getResources(),
-						R.drawable.redball), circleSize * 2, circleSize * 2,
-				false));
+	public static void setUpBitMaps(final MainGameActivity mainGameActivity) {
+		new Thread("MakingFallingObjects") {
 
-		circles.put(Color.BLUE, Bitmap.createScaledBitmap(BitmapFactory
-				.decodeResource(mainGameActivity.getResources(),
-						R.drawable.blueball), circleSize * 2, circleSize * 2,
-				false));
+			public void run() {
+		circles.put(Color.RED, Bitmap.createScaledBitmap(
+				BitmapFactory.decodeResource(mainGameActivity.getResources(), R.drawable.redball), circleSize * 2,
+				circleSize * 2, false));
 
-		circles.put(Color.GREEN, Bitmap.createScaledBitmap(BitmapFactory
-				.decodeResource(mainGameActivity.getResources(),
-						R.drawable.greenball), circleSize * 2, circleSize * 2,
-				false));
+		circles.put(Color.BLUE, Bitmap.createScaledBitmap(
+				BitmapFactory.decodeResource(mainGameActivity.getResources(), R.drawable.blueball), circleSize * 2,
+				circleSize * 2, false));
 
-		circles.put(Color.YELLOW, Bitmap.createScaledBitmap(BitmapFactory
-				.decodeResource(mainGameActivity.getResources(),
-						R.drawable.yellowball), circleSize * 2, circleSize * 2,
-				false));
+		circles.put(Color.GREEN, Bitmap.createScaledBitmap(
+				BitmapFactory.decodeResource(mainGameActivity.getResources(), R.drawable.greenball), circleSize * 2,
+				circleSize * 2, false));
 
-		circles.put(Color.MAGENTA, Bitmap.createScaledBitmap(BitmapFactory
-				.decodeResource(mainGameActivity.getResources(),
-						R.drawable.pinkball), circleSize * 2, circleSize * 2,
-				false));
+		circles.put(Color.YELLOW, Bitmap.createScaledBitmap(
+				BitmapFactory.decodeResource(mainGameActivity.getResources(), R.drawable.yellowball), circleSize * 2,
+				circleSize * 2, false));
+
+		circles.put(Color.MAGENTA, Bitmap.createScaledBitmap(
+				BitmapFactory.decodeResource(mainGameActivity.getResources(), R.drawable.pinkball), circleSize * 2,
+				circleSize * 2, false));
 		bitMapLoaded = true;
+			}
+		}.start();
 	}
 
 	CatchMe catchMe = CatchMe.getInstance();
 
-	private CopyOnWriteArrayList<FallingObject> fallingCircles = new CopyOnWriteArrayList<FallingObject>();
+	private final CopyOnWriteArrayList<FallingObject> fallingCircles = new CopyOnWriteArrayList<FallingObject>();
 
 	public FallingObjectContainer(MainGameActivity mainGameActivity) {
-		setUpBitMaps(mainGameActivity);
+		if (!bitMapLoaded) {
+			setUpBitMaps(mainGameActivity);
+		}
 	}
 
 	public void drawCircles(Canvas canvas, Paint mPaint) {
 		@SuppressWarnings("unused")
 		final String TAG = "drawCircles";
 		if (!fallingCircles.isEmpty()) {
-			for (FallingObject itCircle : fallingCircles) {
+			for (final FallingObject itCircle : fallingCircles) {
 				itCircle.drawCircle(canvas, mPaint, circleSize);
 			}
 		}
 	}
 
 	private int generateColour() {
-		int colours = 5;
-		int rand = (int) (Math.random() * colours);
-		logger.localDebugLog(1, "circleColour", "number: " + rand + " : "
-				+ colours);
+		final int colours = 5;
+		final int rand = (int) (Math.random() * colours);
+		logger.localDebugLog(1, "circleColour", "number: " + rand + " : " + colours);
 		switch (rand) {
-		case 0:
-			return Color.RED;
-		case 1:
-			return Color.BLUE;
-		case 2:
-			return Color.GREEN;
-		case 3:
-			return Color.YELLOW;
-		default:
-			return Color.MAGENTA;
+			case 0:
+				return Color.RED;
+			case 1:
+				return Color.BLUE;
+			case 2:
+				return Color.GREEN;
+			case 3:
+				return Color.YELLOW;
+			default:
+				return Color.MAGENTA;
 		}
 	}
 
@@ -110,18 +113,15 @@ public class FallingObjectContainer {
 		}
 	}
 
-	public void makeNewFallingObject(int timeToCentre, Point startPosition,
-			Point sizeIn) {
+	public void makeNewFallingObject(int timeToCentre, Point startPosition, Point sizeIn) {
 		@SuppressWarnings("unused")
 		final String TAG = "makeNewFallingObject";
-		int color = generateColour();
-		fallingCircles.add(new FallingObject(timeToCentre, startPosition,
-				sizeIn, circles.get(color), color));
+		final int color = generateColour();
+		fallingCircles.add(new FallingObject(timeToCentre, startPosition, sizeIn, circles.get(color), color));
 	}
 
 	public boolean shouldICheck(int i, int halfBucket) {
-		return get(i).shouldICheck(halfBucket, circleSize,
-				catchMe.getCentrePoint());
+		return get(i).shouldICheck(halfBucket, circleSize, catchMe.getCentrePoint());
 	}
 
 	public int size() {
@@ -129,13 +129,13 @@ public class FallingObjectContainer {
 	}
 
 	public void updateCirclePositions(float deltaMilli) {
-		float dTimeShrink = deltaMilli / 20;
-		for (FallingObject thisOne : fallingCircles) {
+		final float dTimeShrink = deltaMilli / 20;
+		for (final FallingObject thisOne : fallingCircles) {
 			thisOne.updatePosition(dTimeShrink);
 		}
 	}
 
-	public static boolean bitMapsSetUp() {
+	public static boolean bitMapLoaded() {
 		return bitMapLoaded;
 	}
 }

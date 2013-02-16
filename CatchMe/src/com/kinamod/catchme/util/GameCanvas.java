@@ -23,12 +23,11 @@ import com.kinamod.catchme.activities.MainGameActivity;
 
 public class GameCanvas extends SurfaceView implements SensorEventListener {
 
-	private static CustomisedLogging logger = new CustomisedLogging(false,
-			false);
+	private static CustomisedLogging logger = new CustomisedLogging(false, false);
 
 	CatchMe catchMe = CatchMe.getInstance();
 	MainGameActivity mainGameActivity;
-	private Paint mPaint = new Paint();
+	private final Paint mPaint = new Paint();
 	// TESTING ROTATION
 	int of360 = 0;
 	float textSize = 50, incer = 1;
@@ -87,7 +86,7 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 	}
 
 	private void drawEverything() {
-		Canvas canvas = getHolder().lockCanvas();
+		final Canvas canvas = getHolder().lockCanvas();
 		if (canvas == null) {
 			return;// TODO
 		}
@@ -124,10 +123,10 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 		drawExplosions(canvas);
 		drawBars(canvas);
 		if (!catchMe.isPaused()) {
-		drawCircles(canvas);
+			drawCircles(canvas);
 		}
 		if (catchMe.isGameStopped() || catchMe.isPaused()) {
-			float beforeSize = mPaint.getTextSize();
+			final float beforeSize = mPaint.getTextSize();
 			mPaint.setColor(Color.rgb(200, 200, 200));
 			if (textSize > 60 || textSize < 40) {
 				incer *= -1;
@@ -136,10 +135,10 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 			mPaint.setTextSize(textSize);
 			mPaint.setTextAlign(Paint.Align.CENTER);
 			if (catchMe.isPaused()) {
-			canvas.drawText(mainGameActivity.getResources().getString(R.string.textTouchToResume),
-					catchMe.getScreenSize().x / 2, catchMe.getScreenSize().x / 2, mPaint);
-			mPaint.setTextSize(30);
-			canvas.drawText(mainGameActivity.getResources().getString(R.string.textBackToEndGame),
+				canvas.drawText(mainGameActivity.getResources().getString(R.string.textTouchToResume),
+						catchMe.getScreenSize().x / 2, catchMe.getScreenSize().x / 2, mPaint);
+				mPaint.setTextSize(30);
+				canvas.drawText(mainGameActivity.getResources().getString(R.string.textBackToEndGame),
 						catchMe.getScreenSize().x / 2, catchMe.getScreenSize().y / 2, mPaint);
 			} else {
 				canvas.drawText(mainGameActivity.getResources().getString(R.string.textTapToStart),
@@ -156,18 +155,16 @@ public class GameCanvas extends SurfaceView implements SensorEventListener {
 	public void onSensorChanged(SensorEvent event) {
 		final String TAG = "sensorChanged";
 
-		float[] values = event.values;
+		final float[] values = event.values;
 		logger.localDebugLog(1, TAG, "values.length: " + values.length);
 		// Movement
-		float orientX = values[0];
-		float orientY = values[1];
+		final float orientX = values[0];
+		final float orientY = values[1];
 
 		if (orientY < 0) {
-			catchMe.setRotateDegrees(MathsHelper.xAndYtoDegrees(orientX,
-					orientY) + 180);
+			catchMe.setRotateDegrees(MathsHelper.xAndYtoDegrees(orientX, orientY) + 180);
 		} else {
-			catchMe.setRotateDegrees(MathsHelper.xAndYtoDegrees(orientX,
-					orientY));
+			catchMe.setRotateDegrees(MathsHelper.xAndYtoDegrees(orientX, orientY));
 		}
 	}
 
