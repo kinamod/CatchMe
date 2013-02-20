@@ -49,7 +49,7 @@ import com.kinamod.catchme.util.SoundPoolCatchMe;
 import com.swarmconnect.SwarmActivity;
 
 public class MainGameActivity extends SwarmActivity {
-	private static final CustomisedLogging logger = new CustomisedLogging(true, false);
+	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
 	private static MainGameActivity MAIN_GAME_ACTIVITY;
 	private static int noCircles = 0;
 	SurfaceHolder surfaceHolder;

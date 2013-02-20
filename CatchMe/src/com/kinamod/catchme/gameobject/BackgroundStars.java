@@ -18,7 +18,7 @@ public class BackgroundStars {
 	static int bmpHeight;
 	static int bmpWidth;
 	CatchMe catchMe = CatchMe.getInstance();
-	static CustomisedLogging logger = new CustomisedLogging(true, false);
+	static CustomisedLogging logger = new CustomisedLogging(false, false);
 
 	Matrix mtrx = new Matrix(), slaveMtrx = new Matrix(), rotMatrix = new Matrix();
 	static Bitmap myBitmap;

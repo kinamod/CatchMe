@@ -44,7 +44,7 @@ public class HomeScreenActivity extends SwarmActivity {
 	private static HomeScreenActivity instance;
 	private final PreferenceHandler prefHand = new PreferenceHandler();
 	CatchMe catchMe = CatchMe.getInstance();
-	CustomisedLogging logger = new CustomisedLogging(true, false);
+	CustomisedLogging logger = new CustomisedLogging(false, false);
 	boolean menuShowing = false, musicPlaying = false;
 	private static MediaPlayer player;
 	private final ImageView[] whiteButtons = new ImageView[9];
@@ -409,7 +409,7 @@ public class HomeScreenActivity extends SwarmActivity {
 		request.addTestDevice(AdRequest.TEST_EMULATOR);
 		request.setGender(AdRequest.Gender.MALE);
 		request.addTestDevice("D1AA72C9A2A1C5A11117338EA973D814");// my one s
-		request.addTestDevice("BD7312D29024948D23A2FD559B4BFDD9");// chris'
+		// request.addTestDevice("BD7312D29024948D23A2FD559B4BFDD9");// chris'
 																	// nexus
 		adView.loadAd(request);
 	}

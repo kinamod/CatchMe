@@ -14,7 +14,7 @@ import com.kinamod.catchme.activities.HomeScreenActivity;
 public class PreferenceHandler {
 	private SharedPreferences prefs;
 	CatchMe catchMe = CatchMe.getInstance();
-	private static final CustomisedLogging logger = new CustomisedLogging(true, false);
+	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
 	public void loadHighScores(Activity activity) {
 		@SuppressWarnings("unused")
 		final String TAG = "PrefStores";

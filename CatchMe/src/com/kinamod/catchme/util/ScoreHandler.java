@@ -24,7 +24,7 @@ public class ScoreHandler {
 	@SuppressLint("UseSparseArrays")
 	private static Map<Integer, SwarmAchievement> achievements = new HashMap<Integer, SwarmAchievement>();
 	CatchMe catchMe = CatchMe.getInstance();
-	CustomisedLogging logger = new CustomisedLogging(true, false);
+	CustomisedLogging logger = new CustomisedLogging(false, false);
 
 	public ScoreHandler(HomeScreenActivity hsa) {
 		hSA = hsa;
@@ -83,6 +83,38 @@ public class ScoreHandler {
 			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER1000)) {
 				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER1000);
 				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast1000),
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		}
+		if (catchMe.getScore() >= 2000) {
+			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER2000)) {
+				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER2000);
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast2000),
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		}
+		if (catchMe.getScore() >= 10000) {
+			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER10000)) {
+				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER10000);
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast10000),
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		}
+		if (catchMe.getScore() >= 20000) {
+			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER20000)) {
+				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER20000);
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast20000),
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		}
+		if (catchMe.getScore() >= 50000) {
+			if (achievements != null && !achievements.containsKey(SwarmHandler.SWARM_ACH_OVER50000)) {
+				SwarmAchievement.unlock(SwarmHandler.SWARM_ACH_OVER50000);
+				final Toast toast = Toast.makeText(hSA, hSA.getResources().getString(R.string.textPast50000),
 						Toast.LENGTH_SHORT);
 				toast.show();
 			}

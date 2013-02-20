@@ -18,6 +18,11 @@ public class SwarmHandler {
 	public static final int SWARM_ACH_OVER500 = 9738;
 	public static final int SWARM_ACH_OVER1000 = 9741;
 
+	public static final int SWARM_ACH_OVER2000 = 10163;
+	public static final int SWARM_ACH_OVER10000 = 10165;
+	public static final int SWARM_ACH_OVER20000 = 10167;
+	public static final int SWARM_ACH_OVER50000 = 10169;
+
 	public static final String SWARM_KEY = "2dfc6c0404b19b5ae69eaf28db852ac0";
 	public static final int SWARM_ID = 3732;
 	public static final int LDBOARD_ONE = 5808;

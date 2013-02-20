@@ -27,7 +27,7 @@ public class CatchMe extends Application {
 	private static CatchMe singleton;
 	private static Vibrator vib;
 
-	private static final CustomisedLogging logger = new CustomisedLogging(true, false);
+	private static final CustomisedLogging logger = new CustomisedLogging(false, false);
 
 	// private boolean aNewHighScore = false;
 	// private int bucketSize;
