@@ -146,7 +146,7 @@ public class HomeScreenActivity extends SwarmActivity {
 		// }
 		// }.start();
 		time = System.currentTimeMillis();
-		//animateStartGame(view, startGameIntent);
+		// animateStartGame(view, startGameIntent);
 		animateButtQuick(view, 1);
 		logger.localDebugLog(1, "TIMER", "Animate buttons: " + (System.currentTimeMillis() - time));
 
@@ -162,7 +162,9 @@ public class HomeScreenActivity extends SwarmActivity {
 		animateButtQuick(v, 5);
 
 		final ImageView img = (ImageView) findViewById(R.id.buttToggleSound);
-		catchMe.setSoundFX(!catchMe.isSoundFX());
+		if (v != null) {
+			catchMe.setSoundFX(!catchMe.isSoundFX());
+		}
 
 		if (catchMe.isSoundFX()) {
 			img.setTag(R.drawable.button_sndon);
@@ -177,7 +179,9 @@ public class HomeScreenActivity extends SwarmActivity {
 		animateButtQuick(v, 6);
 
 		final ImageView img = (ImageView) findViewById(R.id.buttToggleSens);
-		catchMe.setHighSensitivity(!catchMe.isHighSensitivity());
+		if (v != null) {
+			catchMe.setHighSensitivity(!catchMe.isHighSensitivity());
+		}
 
 		if (catchMe.isHighSensitivity()) {
 			img.setTag(R.drawable.button_senshigh);
@@ -192,7 +196,9 @@ public class HomeScreenActivity extends SwarmActivity {
 		animateButtQuick(v, 7);
 
 		final ImageView img = (ImageView) findViewById(R.id.buttToggleInvert);
-		catchMe.setInvertTilt(!catchMe.isInvertTilt());
+		if (v != null) {
+			catchMe.setInvertTilt(!catchMe.isInvertTilt());
+		}
 
 		if (catchMe.isInvertTilt()) {
 			img.setTag(R.drawable.button_inverton);
@@ -207,7 +213,9 @@ public class HomeScreenActivity extends SwarmActivity {
 		animateButtQuick(v, 8);
 
 		final ImageView img = (ImageView) findViewById(R.id.buttToggleMusic);
-		catchMe.setMusicON(!catchMe.isMusicON());
+		if (v != null) {
+			catchMe.setMusicON(!catchMe.isMusicON());
+		}
 
 		if (catchMe.isMusicON()) {
 			img.setImageResource(R.drawable.button_musicon);
@@ -222,7 +230,9 @@ public class HomeScreenActivity extends SwarmActivity {
 		animateButtQuick(v, 9);
 
 		final ImageView img = (ImageView) findViewById(R.id.buttToggleVibrate);
-		catchMe.setVibrate(!catchMe.isVibrate());
+		if (v != null) {
+			catchMe.setVibrate(!catchMe.isVibrate());
+		}
 
 		if (catchMe.isVibrate()) {
 			img.setImageResource(R.drawable.button_vibrateon);
@@ -411,6 +421,7 @@ public class HomeScreenActivity extends SwarmActivity {
 
 	MediaPlayer.OnErrorListener mPlayerListener = new MediaPlayer.OnErrorListener() {
 
+		@Override
 		public boolean onError(MediaPlayer mp, int what, int extra) {
 			player.reset();
 			logger.localDebugLog(2, "Listeners", "Media Player onError callback!");

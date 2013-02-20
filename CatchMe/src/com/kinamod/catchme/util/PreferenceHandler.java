@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Environment;
 
 import com.kinamod.catchme.CatchMe;
 import com.kinamod.catchme.activities.HomeScreenActivity;
@@ -54,6 +55,8 @@ public class PreferenceHandler {
 		logger.localDebugLog(1, "LoadPref", "    Invert: " + catchMe.isInvertTilt());
 		logger.localDebugLog(1, "LoadPref", "    Sensitivity: " + catchMe.isHighSensitivity());
 
+		logger.localDebugLog(1, "LoadPref", Environment.getDataDirectory().toString());
+		logger.localDebugLog(1, "LoadPref", Environment.getExternalStorageState().toString());
 	}
 
 	public void savePrefstoFile(HomeScreenActivity activity) {

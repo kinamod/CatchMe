@@ -145,7 +145,7 @@ public class CatchMe extends Application {
 	}
 
 	public boolean isMusicON() {
-		logger.localDebugLog(1, "LoadPref", "music ON: " + musicON);
+		logger.localDebugLog(1, "LoadPref", "isMusic ON: " + musicON + " - Thread: " + Thread.currentThread().getName());
 		return this.musicON;
 	}
 
@@ -214,8 +214,10 @@ public class CatchMe extends Application {
 	}
 
 	public void setMusicON(boolean musicON) {
-		logger.localDebugLog(1, "LoadPref", "    setMusic: " + isMusicON());
+		logger.localDebugLog(1, "LoadPref", "    before - setMusic: " + isMusicON() + " - Thread: "
+				+ Thread.currentThread().getName());
 		this.musicON = musicON;
+		logger.localDebugLog(1, "LoadPref", "    after - setMusic: " + isMusicON());
 	}
 
 	public void setRotateDegrees(float in) {
