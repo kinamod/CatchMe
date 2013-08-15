@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kinamod.catchme"
-    android:versionCode="6"
-    android:versionName="2.0.3" >
+    package="com.kinamod.catchme2"
+    android:versionCode="7"
+    android:versionName="2.0.4" >
 
     <uses-sdk
         android:minSdkVersion="5"
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activities.SplashScreenActivity"
+            android:name="com.kinamod.catchme2.activities.SplashScreenActivity"
      		android:exported="true"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
             <intent-filter>
@@ -26,7 +26,7 @@
           	</intent-filter>
         </activity>
         <activity
-            android:name=".activities.HomeScreenActivity"
+            android:name="com.kinamod.catchme2.activities.HomeScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="nosensor"
@@ -34,7 +34,7 @@
             android:theme="@style/FullscreenTheme" >
         </activity>
         <activity
-            android:name=".activities.MainGameActivity"
+            android:name="com.kinamod.catchme2.activities.MainGameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="nosensor"
